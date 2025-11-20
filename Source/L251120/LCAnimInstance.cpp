@@ -5,6 +5,7 @@
 #include "Gameframework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "LMyCharacter.h"
+#include "KismetAnimationLibrary.h"
 
 void ULCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
@@ -15,6 +16,8 @@ void ULCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		GroundSpeed = Character->GetCharacterMovement()->Velocity.Size2D();
 		this->bIsRun = Character->bIsRun;
+		//Direction = CalculateDirection(Character->GetCharacterMovement()->Velocity, Character->GetActorRotation()); //오류 나는거 확인해 보라고 남겨둔다..
+		Direction = UKismetAnimationLibrary::CalculateDirection(Character->GetCharacterMovement()->Velocity, Character->GetActorRotation());
 	}
 }
 

@@ -24,6 +24,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsRun : 1 = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	float Direction;
+
 	UFUNCTION()
 	void AnimNotify_SkeletonNotify();
+
 };
