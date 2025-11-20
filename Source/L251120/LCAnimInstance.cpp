@@ -17,3 +17,8 @@ void ULCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		this->bIsRun = Character->bIsRun;
 	}
 }
+
+void ULCAnimInstance::AnimNotify_SkeletonNotify()
+{
+	UE_LOG(LogTemp, Warning, TEXT("SkeletonNotify"));
+}
