@@ -18,6 +18,8 @@ void ULCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		this->bIsRun = Character->bIsRun;
 		//Direction = CalculateDirection(Character->GetCharacterMovement()->Velocity, Character->GetActorRotation()); //오류 나는거 확인해 보라고 남겨둔다..
 		Direction = UKismetAnimationLibrary::CalculateDirection(Character->GetCharacterMovement()->Velocity, Character->GetActorRotation());
+		AimYaw = Character->GetBaseAimRotation().Yaw;
+		AimPitch = Character->GetBaseAimRotation().Pitch;
 	}
 }
 

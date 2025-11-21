@@ -8,8 +8,8 @@ public class L251120EditorTarget : TargetRules
 	public L251120EditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V5;
+        DefaultBuildSettings = BuildSettingsVersion.V6;
 
-		ExtraModuleNames.AddRange( new string[] { "L251120" } );
+        ExtraModuleNames.AddRange( new string[] { "L251120" } );
 	}
 }
