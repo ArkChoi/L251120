@@ -36,6 +36,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bIsRun : 1 = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bLeftLean : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bRightLean : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bAiming : 1 = false;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Move(float Forward, float Right);

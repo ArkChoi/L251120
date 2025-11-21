@@ -33,6 +33,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	float AimPitch;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bLeftLean : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bRightLean : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bAiming : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	float CurrentLeanAngle;
+
 	UFUNCTION()
 	void AnimNotify_SkeletonNotify();
 

@@ -20,6 +20,24 @@ void ULCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		Direction = UKismetAnimationLibrary::CalculateDirection(Character->GetCharacterMovement()->Velocity, Character->GetActorRotation());
 		AimYaw = Character->GetBaseAimRotation().Yaw;
 		AimPitch = Character->GetBaseAimRotation().Pitch;
+		bAiming = Character->bAiming;
+		bLeftLean = Character->bLeftLean;
+		bRightLean = Character->bRightLean;
+
+		float TargetLeanAngle = 0;
+		if (bLeftLean)
+		{
+			TargetLeanAngle = -30.f;
+		}
+		else if (bRightLean)
+		{
+			TargetLeanAngle = 30.f;
+		}
+		else
+		{
+			TargetLeanAngle = 0;
+		}
+		CurrentLeanAngle = FMath::FInterpTo(CurrentLeanAngle, TargetLeanAngle, DeltaSeconds, 8.0f);
 	}
 }
 
