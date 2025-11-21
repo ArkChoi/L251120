@@ -23,6 +23,7 @@ void ULCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bAiming = Character->bAiming;
 		bLeftLean = Character->bLeftLean;
 		bRightLean = Character->bRightLean;
+		bCrouching = Character->bCrouching;
 
 		float TargetLeanAngle = 0;
 		if (bLeftLean)
@@ -38,6 +39,8 @@ void ULCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			TargetLeanAngle = 0;
 		}
 		CurrentLeanAngle = FMath::FInterpTo(CurrentLeanAngle, TargetLeanAngle, DeltaSeconds, 8.0f);
+
+		WeaponState = Character->WeaponState;
 	}
 }
 

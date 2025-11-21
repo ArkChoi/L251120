@@ -6,6 +6,14 @@
 #include "GameFramework/Character.h"
 #include "LMyCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum class EWeaponState : uint8
+{
+	Unarmed = 0 UMETA(DisplayName = "Unarmed"),
+	Pistol = 10 UMETA(DisplayName = "Pistol"),
+	Rifle = 20 UMETA(DisplayName = "Rifle")
+};
+
 UCLASS()
 class L251120_API ALMyCharacter : public ACharacter
 {
@@ -45,6 +53,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bAiming : 1 = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	EWeaponState  WeaponState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bCrouching : 1 = false;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Move(float Forward, float Right);
@@ -54,4 +68,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RunTrigger();
+
+	UFUNCTION(BlueprintCallable)
+	void CrouchTrigger();
 };

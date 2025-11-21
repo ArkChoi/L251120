@@ -25,6 +25,8 @@ ALMyCharacter::ALMyCharacter()
 
 	GetMesh()->SetRelativeLocation(FVector(0,0, -GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight()));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.f, 0));
+
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 }
 
 // Called when the game starts or when spawned
@@ -77,6 +79,17 @@ void ALMyCharacter::RunTrigger()
 		return;
 	}
 	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+}
+
+void ALMyCharacter::CrouchTrigger()
+{
+	bCrouching = CanCrouch();
+	if (bCrouching)
+	{
+		Crouch();
+		return;
+	}
+	UnCrouch();
 }
 
 

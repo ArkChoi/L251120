@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "LMyCharacter.h" //순서 중요하다고..
 #include "LCAnimInstance.generated.h"
 
 /**
@@ -44,6 +45,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	float CurrentLeanAngle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	EWeaponState  WeaponState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	uint8 bCrouching : 1 = false;
 
 	UFUNCTION()
 	void AnimNotify_SkeletonNotify();
