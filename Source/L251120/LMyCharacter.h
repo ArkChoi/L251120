@@ -14,6 +14,19 @@ enum class EWeaponState : uint8
 	Rifle = 20 UMETA(DisplayName = "Rifle")
 };
 
+UENUM(BlueprintType)
+enum class EHitState : uint8
+{
+	Back_01 = 0,
+	Front_01 = 1,
+	Front_02 = 2,
+	Front_03 = 3,
+	Front_04 = 4,
+	Front_05 = 5,
+	Front_06 = 6,
+	Front_07 = 7
+};
+
 UCLASS()
 class L251120_API ALMyCharacter : public ACharacter
 {
@@ -59,6 +72,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
 	uint8 bCrouching : 1 = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<class UAnimMontage> HitMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<class UAnimMontage> DeathMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<class UChildActorComponent> Weapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<class UInputAction> IA_Reload;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Move(float Forward, float Right);
@@ -71,4 +96,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CrouchTrigger();
+
+	UFUNCTION(BlueprintCallable)
+	void Reload();
+
+	UFUNCTION(BlueprintCallable)
+	void HitReact();
 };

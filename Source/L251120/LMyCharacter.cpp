@@ -7,6 +7,10 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/ChildActorComponent.h"
+#include "EnhancedInputComponent.h"
+#include "Weapon/WeaponBase.h"
+#include "Math/UnrealMathUtility.h"
 
 // Sets default values
 ALMyCharacter::ALMyCharacter()
@@ -27,12 +31,22 @@ ALMyCharacter::ALMyCharacter()
 	GetMesh()->SetRelativeRotation(FRotator(0, -90.f, 0));
 
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
+	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
+	Weapon->SetupAttachment(GetMesh());
 }
 
 // Called when the game starts or when spawned
 void ALMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//무기 집으면 잡게끔 이동 시킬 것 (지금은 간단히.)
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	if (ChildWeapon)
+	{
+		ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+	}
 	
 }
 
@@ -48,6 +62,12 @@ void ALMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	UEnhancedInputComponent* UIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	if (UIC)
+	{
+		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this,
+			&ALMyCharacter::Reload);
+	}
 }
 
 void ALMyCharacter::Move(float Forward, float Right)
@@ -92,4 +112,25 @@ void ALMyCharacter::CrouchTrigger()
 	UnCrouch();
 }
 
+
+void ALMyCharacter::Reload() 
+{
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	if (ChildWeapon)
+	{
+		PlayAnimMontage(ChildWeapon->ReloadMontage);
+	}
+}
+
+void ALMyCharacter::HitReact()
+{
+	int32 RandInteger = FMath::RandRange(0,7);
+	FName RandName[8] = {
+	"Back_01", "Front_01", "Front_02",
+	"Front_03", "Front_04", "Front_05",
+	"Front_06", "Front_07"
+	};
+	PlayAnimMontage(HitMontage,1.0f ,RandName[RandInteger]);
+	
+}
 
