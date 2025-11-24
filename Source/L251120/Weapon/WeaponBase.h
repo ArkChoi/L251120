@@ -43,4 +43,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<class UAnimMontage> ReloadMontage;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void Reload();
+
+	UFUNCTION(BlueprintCallable)
+	void Fire();
 };

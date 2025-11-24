@@ -46,6 +46,7 @@ void ALMyCharacter::BeginPlay()
 	if (ChildWeapon)
 	{
 		ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+		WeaponState = EWeaponState::Pistol;
 	}
 	
 }
@@ -67,6 +68,8 @@ void ALMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	{
 		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this,
 			&ALMyCharacter::Reload);
+		UIC->BindAction(IA_Fire, ETriggerEvent::Triggered, this,
+			&ALMyCharacter::DoFire);
 	}
 }
 
@@ -130,7 +133,28 @@ void ALMyCharacter::HitReact()
 	"Front_03", "Front_04", "Front_05",
 	"Front_06", "Front_07"
 	};
+	//FString SectionName = FString::Printf(TEXT("%d"), FMath::RandRange(1, 8)); //위 코드와 같은 동작이나.. 이름이 1,2,3,4,... 로 되어 있어야 한다
+
 	PlayAnimMontage(HitMontage,1.0f ,RandName[RandInteger]);
+	//PlayAnimMontage(HitMontage, 1.0f, FName(*SectionName)); //위 코드와 같은 동작이나.. 이름이 1,2,3,4,... 로 되어 있어야 한다
 	
+}
+
+void ALMyCharacter::ReloadWeapon()
+{
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	if (ChildWeapon)
+	{
+		ChildWeapon->Reload();
+	}
+}
+
+void ALMyCharacter::DoFire()
+{
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	if (ChildWeapon)
+	{
+		ChildWeapon->Fire();
+	}
 }
 
