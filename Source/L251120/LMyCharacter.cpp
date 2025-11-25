@@ -15,6 +15,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Weapon/BaseDamageType.h"
 #include "Engine/DamageEvents.h"
+#include "Sound/SoundCue.h"
 
 // Sets default values
 ALMyCharacter::ALMyCharacter()
@@ -207,25 +208,25 @@ void ALMyCharacter::DoFire()
 		{
 			//RPG 
 			//UGameplayStatics::ApplyDamage(HitResult.GetActor(),
-			//	50,
+			//	10,
 			//	GetController(),
 			//	this,
 			//	UBaseDamageType::StaticClass()
 			//);
 
 			////ÃÑ½î´Â µ¥¹ÌÁö
-			//UGameplayStatics::ApplyPointDamage(HitResult.GetActor(),
-			//	50,
-			//	-HitResult.ImpactNormal,
-			//	HitResult,
-			//	GetController(),
-			//	this,
-			//	UBaseDamageType::StaticClass()
-			//);
+			UGameplayStatics::ApplyPointDamage(HitResult.GetActor(),
+				10,
+				-HitResult.ImpactNormal,
+				HitResult,
+				GetController(),
+				this,
+				UBaseDamageType::StaticClass()
+			);
 
 			////¹üÀ§ °ø°Ý, ÆøÅº
-			UGameplayStatics::ApplyRadialDamage(HitResult.GetActor(),
-				50,
+			/*UGameplayStatics::ApplyRadialDamage(HitResult.GetActor(),
+				10,
 				HitResult.ImpactPoint,
 				300.0f,
 				UBaseDamageType::StaticClass(),
@@ -233,8 +234,9 @@ void ALMyCharacter::DoFire()
 				this,
 				GetController(),
 				true
-			);
+			);*/
 
+			UGameplayStatics::PlaySound2D(GetWorld(), FireSoundCue);
 			UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.GetActor()->GetName());
 		}
 	}
@@ -274,11 +276,21 @@ float ALMyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("%f"), CurrentHP);
+	HitReact();
 
 	if (CurrentHP <= 0)
 	{
+		FString SectionName = FString::Printf(TEXT("%d"), FMath::RandRange(1, 8));
+		PlayAnimMontage(DeathMontage, 1.0f, FName(*SectionName));
 	}
 
 	return 0.0f;
+}
+
+void ALMyCharacter::DoDead()
+{
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetSimulatePhysics(true);
 }
 

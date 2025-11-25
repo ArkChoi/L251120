@@ -9,6 +9,7 @@ public class L251120EditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
         DefaultBuildSettings = BuildSettingsVersion.V6;
+        IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7;
 
         ExtraModuleNames.AddRange( new string[] { "L251120" } );
 	}
