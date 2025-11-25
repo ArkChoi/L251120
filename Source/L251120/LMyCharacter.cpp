@@ -11,6 +11,7 @@
 #include "EnhancedInputComponent.h"
 #include "Weapon/WeaponBase.h"
 #include "Math/UnrealMathUtility.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 ALMyCharacter::ALMyCharacter()
@@ -151,10 +152,62 @@ void ALMyCharacter::ReloadWeapon()
 
 void ALMyCharacter::DoFire()
 {
-	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC)
+	{
+		int32 SizeX = 0;
+		int32 SizeY = 0;
+		int32 CenterX = 0;
+		int32 CenterY = 0;
+		FVector WoirldDiretion;
+		FVector WoirldLocation;
+		FVector CameraLocation;
+		FRotator CameraRotator;
+
+		PC->GetViewportSize(SizeX, SizeY);
+
+		CenterX = SizeX / 2;
+		CenterY = SizeY / 2;
+
+		PC->DeprojectScreenPositionToWorld((float)CenterX, (float)CenterY, WoirldLocation, WoirldDiretion);
+
+		PC->GetPlayerViewPoint(CameraLocation, CameraRotator);
+
+		FVector Start = CameraLocation;
+		FVector End = CameraLocation + WoirldDiretion * 100000.f;
+
+		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
+		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
+		//ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
+		//이것보단.. 그냥 BP 쓰는게 편하다고 한다..
+
+		TArray<AActor*> IngnoreActors;
+		FHitResult HitResult;
+
+		bool bResult = UKismetSystemLibrary::LineTraceSingleForObjects(
+			GetWorld(),
+			Start,
+			End,
+			ObjectTypes,
+			true,
+			IngnoreActors,
+			EDrawDebugTrace::ForDuration,
+			HitResult,
+			true
+		);
+
+		if (bResult)
+		{
+
+		}
+	}
+
+	/*AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
 	if (ChildWeapon)
 	{
 		ChildWeapon->Fire();
-	}
+	}*/
 }
 

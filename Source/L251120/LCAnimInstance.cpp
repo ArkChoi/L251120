@@ -24,6 +24,7 @@ void ULCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bLeftLean = Character->bLeftLean;
 		bRightLean = Character->bRightLean;
 		bCrouching = Character->bCrouching;
+		bIsFalling = Character->GetCharacterMovement()->IsFalling();
 
 		float TargetLeanAngle = 0;
 		if (bLeftLean)

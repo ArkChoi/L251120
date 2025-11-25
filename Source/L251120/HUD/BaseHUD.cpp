@@ -3,8 +3,10 @@
 
 #include "BaseHUD.h"
 #include "Engine/Canvas.h"
-#include "../LMyCharacter.h"
+#include "GameFramework/Character.h"
+//#include "../LMyCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Math/UnrealMathUtility.h"
 
 void ABaseHUD::DrawHUD()
 {
@@ -16,11 +18,23 @@ void ABaseHUD::DrawHUD()
 	int32 CenterY = Canvas->SizeY / 2;
 	int32 DrawSize = 2;
 
-	ALMyCharacter* TempCharacter = Cast<ALMyCharacter>(GetOwningPlayerController()->GetPawn());
-	if (TempCharacter)
+	float CurrentSpeed = 0.f;
+	float MaxSpeed = 0.f;
+	float GapRatio = 0.f;
+
+	int32 GapX = UnitX;
+	int32 GapY = UnitY;
+
+	float DeltaSeconds = GetWorld()->GetDeltaSeconds();
+
+	ACharacter* Pawn = Cast<ACharacter>(GetOwningPawn());
+	if (Pawn)
 	{
-		float GroundSpeed = TempCharacter->GetCharacterMovement()->Velocity.Size2D();
-		if (GroundSpeed > 0 && TempCharacter->bIsRun)
+		CurrentSpeed = Pawn->GetCharacterMovement()->Velocity.Size2D();
+		MaxSpeed = Pawn->GetCharacterMovement()->GetMaxSpeed();
+		GapRatio = CurrentSpeed / MaxSpeed;
+
+		/*if (GroundSpeed > 0 && Pawn->bIsRun)
 		{
 			DrawSize = 4;
 		}
@@ -31,30 +45,35 @@ void ABaseHUD::DrawHUD()
 		else
 		{
 			DrawSize = 2;
-		}
+		}*/
 	}
 
-	Draw2DLine(CenterX - (UnitX * DrawSize),
+	//ChangeSize = FMath::FInterpTo(ChangeSize, (float)DrawSize, DeltaSeconds, 1.f);
+
+	GapX = (int32)((float)GapX * GapRatio);
+	GapY = (int32)((float)GapY * GapRatio);
+
+	Draw2DLine(CenterX - (UnitX * DrawSize) - GapX,
 		CenterY,
-		CenterX - (UnitX * (DrawSize - 2)),
+		CenterX - GapX,
 		CenterY,
 		FColor::Red);
 
-	Draw2DLine(CenterX + (UnitX * DrawSize),
+	Draw2DLine(CenterX + GapX,
 		CenterY,
-		CenterX + (UnitX * (DrawSize - 2)),
+		CenterX + (UnitX * DrawSize) + GapX,
 		CenterY,
 		FColor::Red);
 
 	Draw2DLine(CenterX,
-		CenterY - (UnitX * DrawSize),
+		CenterY - GapX,
 		CenterX,
-		CenterY - (UnitX * (DrawSize - 2)),
+		CenterY - (UnitX * DrawSize) - GapX,
 		FColor::Red);
 
 	Draw2DLine(CenterX,
-		CenterY + (UnitX * DrawSize),
+		CenterY + GapX,
 		CenterX,
-		CenterY + (UnitX * (DrawSize - 2)),
+		CenterY +(UnitX * DrawSize) + GapX,
 		FColor::Red);
 }
