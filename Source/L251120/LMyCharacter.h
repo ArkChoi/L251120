@@ -80,8 +80,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
 	float MaxHP = 100;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
-	USoundCue* FireSoundCue;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	uint8 bIsFire : 1 = false;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -106,7 +106,12 @@ public:
 	void ReloadWeapon();
 
 	UFUNCTION(BlueprintCallable)
+	void StartFire();
+
 	void DoFire();
+
+	UFUNCTION(BlueprintCallable)
+	void StopFire();
 
 	UFUNCTION(BlueprintCallable)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;

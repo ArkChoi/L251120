@@ -52,6 +52,7 @@ void ALMyCharacter::BeginPlay()
 	{
 		ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
 		WeaponState = EWeaponState::Pistol;
+		ChildWeapon->SetOwner(this);
 	}
 	
 }
@@ -73,8 +74,10 @@ void ALMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	{
 		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this,
 			&ALMyCharacter::Reload);
-		UIC->BindAction(IA_Fire, ETriggerEvent::Triggered, this,
-			&ALMyCharacter::DoFire);
+		UIC->BindAction(IA_Fire, ETriggerEvent::Started, this,
+			&ALMyCharacter::StartFire);
+		UIC->BindAction(IA_Fire, ETriggerEvent::Completed, this,
+			&ALMyCharacter::StopFire);
 	}
 }
 
@@ -154,98 +157,29 @@ void ALMyCharacter::ReloadWeapon()
 	}
 }
 
+void ALMyCharacter::StartFire()
+{
+	bIsFire = true;
+	DoFire();
+}
+
 void ALMyCharacter::DoFire()
 {
-	APlayerController* PC = Cast<APlayerController>(GetController());
-	if (PC)
-	{
-		int32 SizeX = 0;
-		int32 SizeY = 0;
-		int32 CenterX = 0;
-		int32 CenterY = 0;
-		FVector WoirldDiretion;
-		FVector WoirldLocation;
-		FVector CameraLocation;
-		FRotator CameraRotator;
-
-		PC->GetViewportSize(SizeX, SizeY);
-
-		CenterX = SizeX / 2;
-		CenterY = SizeY / 2;
-
-		PC->DeprojectScreenPositionToWorld((float)CenterX, (float)CenterY, WoirldLocation, WoirldDiretion);
-
-		PC->GetPlayerViewPoint(CameraLocation, CameraRotator);
-
-		FVector Start = CameraLocation;
-		FVector End = CameraLocation + WoirldDiretion * 100000.f;
-
-		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
-		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
-		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
-		//ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
-		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
-		//이것보단.. 그냥 BP 쓰는게 편하다고 한다..
-
-		TArray<AActor*> IngnoreActors;
-		IngnoreActors.Add(this);
-
-		FHitResult HitResult;
-
-		bool bResult = UKismetSystemLibrary::LineTraceSingleForObjects(
-			GetWorld(),
-			Start,
-			End,
-			ObjectTypes,
-			true,
-			IngnoreActors,
-			EDrawDebugTrace::ForDuration,
-			HitResult,
-			true
-		);
-
-		if (bResult)
-		{
-			//RPG 
-			//UGameplayStatics::ApplyDamage(HitResult.GetActor(),
-			//	10,
-			//	GetController(),
-			//	this,
-			//	UBaseDamageType::StaticClass()
-			//);
-
-			////총쏘는 데미지
-			UGameplayStatics::ApplyPointDamage(HitResult.GetActor(),
-				10,
-				-HitResult.ImpactNormal,
-				HitResult,
-				GetController(),
-				this,
-				UBaseDamageType::StaticClass()
-			);
-
-			////범위 공격, 폭탄
-			/*UGameplayStatics::ApplyRadialDamage(HitResult.GetActor(),
-				10,
-				HitResult.ImpactPoint,
-				300.0f,
-				UBaseDamageType::StaticClass(),
-				IngnoreActors,
-				this,
-				GetController(),
-				true
-			);*/
-
-			UGameplayStatics::PlaySound2D(GetWorld(), FireSoundCue);
-			UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.GetActor()->GetName());
-		}
-	}
-
-	/*AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
 	if (ChildWeapon)
 	{
 		ChildWeapon->Fire();
-	}*/
+	}
+}
+
+void ALMyCharacter::StopFire()
+{
+	bIsFire = false;
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	if (ChildWeapon)
+	{
+		ChildWeapon->StopFire();
+	}
 }
 
 float ALMyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

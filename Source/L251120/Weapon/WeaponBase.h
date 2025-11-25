@@ -44,10 +44,29 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<class UAnimMontage> ReloadMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundCue* FireSoundCue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	uint8 bFullAuto : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", meta = (ClampMin = 0.1f, ClampMax = 2.0f, Unit = "s"))
+	float RefireRate = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float TimeofLastShoot = 0.0f;
+
+	FTimerHandle RefireTimer;
 public:
 	UFUNCTION(BlueprintCallable)
 	void Reload();
 
 	UFUNCTION(BlueprintCallable)
 	void Fire();
+
+	UFUNCTION(BlueprintCallable)
+	void StopFire();
+
+	UFUNCTION(BlueprintCallable)
+	void FireProjectile();
 };

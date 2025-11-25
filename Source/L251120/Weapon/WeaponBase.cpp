@@ -3,6 +3,13 @@
 
 #include "WeaponBase.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
+#include "Sound/SoundCue.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "GameFramework/Character.h"
+#include "BaseDamageType.h"
+#include "TimerManager.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -38,6 +45,124 @@ void AWeaponBase::Reload()
 
 void AWeaponBase::Fire()
 {
+	float CurrentTimeofShoot = GetWorld()->TimeSeconds - TimeofLastShoot;
+
+	if (CurrentTimeofShoot < RefireRate)
+	{
+		return;
+	}
+
+	if (bFullAuto)
+	{
+		GetWorld()->GetTimerManager().SetTimer(RefireTimer, this, &AWeaponBase::Fire, RefireRate, false);
+	}
+
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+
+	ensure(Character); //매크로로 캐릭터가 NULL 값이면 오류 띄어준다고 한다.
+	//check(Character); //이건 에디터까지 죽어서 위치를 알려주는 메크로
+	if (!Character)
+	{
+		return;
+	}
+
+	APlayerController* PC = Cast<APlayerController>(Character->GetController());
+	if (PC)
+	{
+		int32 SizeX = 0;
+		int32 SizeY = 0;
+		int32 CenterX = 0;
+		int32 CenterY = 0;
+		FVector WoirldDiretion;
+		FVector WoirldLocation;
+		FVector CameraLocation;
+		FRotator CameraRotator;
+
+		PC->GetViewportSize(SizeX, SizeY);
+
+		CenterX = SizeX / 2;
+		CenterY = SizeY / 2;
+
+		PC->DeprojectScreenPositionToWorld((float)CenterX, (float)CenterY, WoirldLocation, WoirldDiretion);
+
+		PC->GetPlayerViewPoint(CameraLocation, CameraRotator);
+
+		FVector Start = CameraLocation;
+		FVector End = CameraLocation + WoirldDiretion * 100000.f;
+
+		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
+		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldDynamic));
+		//ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
+		ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody));
+		//이것보단.. 그냥 BP 쓰는게 편하다고 한다..
+
+		TArray<AActor*> IngnoreActors;
+		IngnoreActors.Add(this);
+
+		FHitResult HitResult;
+
+		bool bResult = UKismetSystemLibrary::LineTraceSingleForObjects(
+			GetWorld(),
+			Start,
+			End,
+			ObjectTypes,
+			true,
+			IngnoreActors,
+			EDrawDebugTrace::ForDuration,
+			HitResult,
+			true
+		);
+
+		if (bResult)
+		{
+			//RPG 
+			//UGameplayStatics::ApplyDamage(HitResult.GetActor(),
+			//	10,
+			//	PC,
+			//	this,
+			//	UBaseDamageType::StaticClass()
+			//);
+
+			////총쏘는 데미지
+			UGameplayStatics::ApplyPointDamage(HitResult.GetActor(),
+				10,
+				-HitResult.ImpactNormal,
+				HitResult,
+				PC,
+				this,
+				UBaseDamageType::StaticClass()
+			);
+
+			////범위 공격, 폭탄
+			/*UGameplayStatics::ApplyRadialDamage(HitResult.GetActor(),
+				10,
+				HitResult.ImpactPoint,
+				300.0f,
+				UBaseDamageType::StaticClass(),
+				IngnoreActors,
+				this,
+				PC,
+				true
+			);*/
+
+			UGameplayStatics::PlaySound2D(GetWorld(), FireSoundCue);
+			UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.GetActor()->GetName());
+		}
+	}
+
 	CurrentBulletCount--;
 	UE_LOG(LogTemp, Warning, TEXT("Fire %d"), CurrentBulletCount);
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FireSoundCue, GetActorLocation());
+	TimeofLastShoot = GetWorld()->TimeSeconds;
+}
+
+void AWeaponBase::StopFire()
+{
+	GetWorld()->GetTimerManager().ClearTimer(RefireTimer);
+}
+
+void AWeaponBase::FireProjectile()
+{
+
 }
