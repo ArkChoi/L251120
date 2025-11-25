@@ -12,6 +12,9 @@
 #include "Weapon/WeaponBase.h"
 #include "Math/UnrealMathUtility.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "Weapon/BaseDamageType.h"
+#include "Engine/DamageEvents.h"
 
 // Sets default values
 ALMyCharacter::ALMyCharacter()
@@ -184,6 +187,8 @@ void ALMyCharacter::DoFire()
 		//이것보단.. 그냥 BP 쓰는게 편하다고 한다..
 
 		TArray<AActor*> IngnoreActors;
+		IngnoreActors.Add(this);
+
 		FHitResult HitResult;
 
 		bool bResult = UKismetSystemLibrary::LineTraceSingleForObjects(
@@ -200,7 +205,37 @@ void ALMyCharacter::DoFire()
 
 		if (bResult)
 		{
+			//RPG 
+			//UGameplayStatics::ApplyDamage(HitResult.GetActor(),
+			//	50,
+			//	GetController(),
+			//	this,
+			//	UBaseDamageType::StaticClass()
+			//);
 
+			////총쏘는 데미지
+			//UGameplayStatics::ApplyPointDamage(HitResult.GetActor(),
+			//	50,
+			//	-HitResult.ImpactNormal,
+			//	HitResult,
+			//	GetController(),
+			//	this,
+			//	UBaseDamageType::StaticClass()
+			//);
+
+			////범위 공격, 폭탄
+			UGameplayStatics::ApplyRadialDamage(HitResult.GetActor(),
+				50,
+				HitResult.ImpactPoint,
+				300.0f,
+				UBaseDamageType::StaticClass(),
+				IngnoreActors,
+				this,
+				GetController(),
+				true
+			);
+
+			UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.GetActor()->GetName());
 		}
 	}
 
@@ -209,5 +244,41 @@ void ALMyCharacter::DoFire()
 	{
 		ChildWeapon->Fire();
 	}*/
+}
+
+float ALMyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
+	{
+		FPointDamageEvent* Event = (FPointDamageEvent*)(&DamageEvent);
+		if (Event)
+		{
+			CurrentHP -= DamageAmount;
+			UE_LOG(LogTemp, Warning, TEXT("Point Damage %f %s"), CurrentHP, *(Event->HitInfo.BoneName.ToString()));
+		}
+	}
+	else if (DamageEvent.IsOfType(FRadialDamageEvent::ClassID))
+	{
+		FRadialDamageEvent* Event = (FRadialDamageEvent*)(&DamageEvent);
+		if (Event)
+		{
+			CurrentHP -= DamageAmount;
+			UE_LOG(LogTemp, Warning, TEXT("Radial Damage %f %s"), CurrentHP, *Event->DamageTypeClass->GetName());
+		}
+	}
+	else
+	{
+		CurrentHP -= DamageAmount;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("%f"), CurrentHP);
+
+	if (CurrentHP <= 0)
+	{
+	}
+
+	return 0.0f;
 }
 

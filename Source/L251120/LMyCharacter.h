@@ -74,6 +74,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UInputAction> IA_Fire;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	float CurrentHP = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	float MaxHP = 100;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Move(float Forward, float Right);
@@ -98,4 +104,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DoFire();
+
+	UFUNCTION(BlueprintCallable)
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 };
