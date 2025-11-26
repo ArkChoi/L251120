@@ -230,34 +230,27 @@ void ALMyCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 	AFloorWeaponBase* TempWeapon = Cast<AFloorWeaponBase>(OtherActor);
 	if (TempWeapon)
 	{
-		WeaponTemplate = TempWeapon->WeaponTemplate;
-	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *WeaponTemplate->GetName());
-
-	if (WeaponTemplate)
-	{
-		Weapon->SetChildActorClass(WeaponTemplate);
+		Weapon->SetChildActorClass(TempWeapon->WeaponTemplate);
 
 		AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
-		if (ChildWeapon && WeaponTemplate->GetName()=="BP_AutoPistol_C")
+		if (ChildWeapon && TempWeapon->WeaponState == EWeaponState::Pistol)
 		{
 			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
 			WeaponState = EWeaponState::Pistol;
 			ChildWeapon->SetOwner(this);
 		}
-		else if (ChildWeapon && WeaponTemplate->GetName() == "BP_AR_C")
+		else if (ChildWeapon && TempWeapon->WeaponState == EWeaponState::Rifle)
 		{
 			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
 			WeaponState = EWeaponState::Rifle;
 			ChildWeapon->SetOwner(this);
 		}
-		/*else (ChildWeapon && WeaponTemplate->GetName() == " ")
+		else if (ChildWeapon && TempWeapon->WeaponState == EWeaponState::GrenadeLauncher)
 		{
 			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
-			WeaponState = EWeaponState::Unarmed;
+			WeaponState = EWeaponState::Rifle;
 			ChildWeapon->SetOwner(this);
-		}*/
+		}
 	}
 }
 

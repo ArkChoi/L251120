@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "WeaponName.h"
 #include "FloorWeaponBase.generated.h"
 
 UCLASS()
@@ -32,4 +33,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VALUE")
 	TSubclassOf<class AWeaponBase> WeaponTemplate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VALUE")
+	EWeaponState WeaponState;
 };

@@ -4,15 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Weapon/WeaponName.h"
 #include "LMyCharacter.generated.h"
 
-UENUM(BlueprintType)
-enum class EWeaponState : uint8
-{
-	Unarmed = 0 UMETA(DisplayName = "Unarmed"),
-	Pistol = 10 UMETA(DisplayName = "Pistol"),
-	Rifle = 20 UMETA(DisplayName = "Rifle")
-};
+//UENUM(BlueprintType)
+//enum class EWeaponState : uint8
+//{
+//	Unarmed = 0 UMETA(DisplayName = "Unarmed"),
+//	Pistol = 10 UMETA(DisplayName = "Pistol"),
+//	Rifle = 20 UMETA(DisplayName = "Rifle")
+//};
 
 UCLASS()
 class L251120_API ALMyCharacter : public ACharacter

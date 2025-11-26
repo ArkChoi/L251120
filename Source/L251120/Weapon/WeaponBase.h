@@ -56,6 +56,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	float TimeofLastShoot = 0.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	FName WeaponName;
+
 	FTimerHandle RefireTimer;
 public:
 	UFUNCTION(BlueprintCallable)
@@ -69,4 +72,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FireProjectile();
+
+	UFUNCTION(BlueprintCallable)
+	FName GetWeaponName();
 };
