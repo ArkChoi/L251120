@@ -68,6 +68,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UChildActorComponent> Weapon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VALUE")
+	TSubclassOf<class AWeaponBase> WeaponTemplate;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UInputAction> IA_Reload;
 
@@ -118,4 +121,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DoDead();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 };

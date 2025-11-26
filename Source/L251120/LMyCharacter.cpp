@@ -16,6 +16,7 @@
 #include "Weapon/BaseDamageType.h"
 #include "Engine/DamageEvents.h"
 #include "Sound/SoundCue.h"
+#include "weapon/FloorWeaponBase.h"
 
 // Sets default values
 ALMyCharacter::ALMyCharacter()
@@ -39,6 +40,8 @@ ALMyCharacter::ALMyCharacter()
 
 	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
 	Weapon->SetupAttachment(GetMesh());
+
+
 }
 
 // Called when the game starts or when spawned
@@ -47,13 +50,6 @@ void ALMyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	//무기 집으면 잡게끔 이동 시킬 것 (지금은 간단히.)
-	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
-	if (ChildWeapon)
-	{
-		ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
-		WeaponState = EWeaponState::Pistol;
-		ChildWeapon->SetOwner(this);
-	}
 	
 }
 
@@ -226,5 +222,42 @@ void ALMyCharacter::DoDead()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetSimulatePhysics(true);
+}
+
+void ALMyCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+
+	AFloorWeaponBase* TempWeapon = Cast<AFloorWeaponBase>(OtherActor);
+	if (TempWeapon)
+	{
+		WeaponTemplate = TempWeapon->WeaponTemplate;
+	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *WeaponTemplate->GetName());
+
+	if (WeaponTemplate)
+	{
+		Weapon->SetChildActorClass(WeaponTemplate);
+
+		AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+		if (ChildWeapon && WeaponTemplate->GetName()=="BP_AutoPistol_C")
+		{
+			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+			WeaponState = EWeaponState::Pistol;
+			ChildWeapon->SetOwner(this);
+		}
+		else if (ChildWeapon && WeaponTemplate->GetName() == "BP_AR_C")
+		{
+			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+			WeaponState = EWeaponState::Rifle;
+			ChildWeapon->SetOwner(this);
+		}
+		/*else (ChildWeapon && WeaponTemplate->GetName() == " ")
+		{
+			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+			WeaponState = EWeaponState::Unarmed;
+			ChildWeapon->SetOwner(this);
+		}*/
+	}
 }
 
