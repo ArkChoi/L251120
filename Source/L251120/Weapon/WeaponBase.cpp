@@ -98,7 +98,7 @@ void AWeaponBase::Fire()
 		//이것보단.. 그냥 BP 쓰는게 편하다고 한다..
 
 		TArray<AActor*> IngnoreActors;
-		IngnoreActors.Add(this);
+		IngnoreActors.Add(GetOwner());
 
 		FHitResult HitResult;
 

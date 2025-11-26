@@ -4,7 +4,6 @@
 #include "BasePCM.h"
 #include "../LMyCharacter.h"
 
-
 ABasePCM::ABasePCM()
 {
 
@@ -18,13 +17,15 @@ void ABasePCM::UpdateCamera(float DeltaTime)
 
 	if (Pawn)
 	{
-		if (Pawn->bIsIronSight)
+		if (!Pawn->bIsIronSight)
 		{
-			SetFOV(60.f);
+			CurrentFOV = FMath::FInterpTo(CurrentFOV, NormalFOV, GetWorld()->DeltaTimeSeconds, ZoomSpeed);
+			SetFOV(CurrentFOV);
 		}
 		else
 		{
-			SetFOV(90.f);
+			CurrentFOV = FMath::FInterpTo(CurrentFOV, IronsightFOV, GetWorld()->DeltaTimeSeconds, ZoomSpeed);
+			SetFOV(CurrentFOV);
 		}
 	}
 }

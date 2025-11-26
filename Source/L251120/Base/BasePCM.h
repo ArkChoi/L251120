@@ -19,4 +19,16 @@ public:
 
 	virtual void UpdateCamera(float DeltaTime) override;
 
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float NormalFOV = 90.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float IronsightFOV = 60.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float CurrentFOV = 90.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float ZoomSpeed = 5.f;
 };
