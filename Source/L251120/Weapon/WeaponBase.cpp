@@ -166,8 +166,3 @@ void AWeaponBase::FireProjectile()
 {
 
 }
-
-FName AWeaponBase::GetWeaponName()
-{
-	return WeaponName;
-}

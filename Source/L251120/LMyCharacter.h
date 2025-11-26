@@ -78,6 +78,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UInputAction> IA_Fire;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<class UInputAction> IA_IronSight;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
 	float CurrentHP = 100;
 
@@ -86,6 +89,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	uint8 bIsFire : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	uint8 bIsIronSight : 1 = false;
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -125,4 +131,22 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+	UFUNCTION()
+	void ProcessBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	UFUNCTION(BlueprintCallable)
+	void UseItme(AActor* PickedUpItem);
+
+	UFUNCTION(BlueprintCallable)
+	void EatItme(AActor* PickedUpItem);
+
+	UFUNCTION(BlueprintCallable)
+	void EquipItme(AActor* PickedUpItem);
+
+	UFUNCTION(BlueprintCallable)
+	void StartIronSight();
+
+	UFUNCTION(BlueprintCallable)
+	void StopIronSight();
 };

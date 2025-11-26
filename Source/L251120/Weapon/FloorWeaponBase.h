@@ -25,7 +25,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr <class USphereComponent> Sphere;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")

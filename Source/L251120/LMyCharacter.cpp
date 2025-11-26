@@ -68,12 +68,11 @@ void ALMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	UEnhancedInputComponent* UIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (UIC)
 	{
-		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this,
-			&ALMyCharacter::Reload);
-		UIC->BindAction(IA_Fire, ETriggerEvent::Started, this,
-			&ALMyCharacter::StartFire);
-		UIC->BindAction(IA_Fire, ETriggerEvent::Completed, this,
-			&ALMyCharacter::StopFire);
+		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this, &ALMyCharacter::Reload);
+		UIC->BindAction(IA_Fire, ETriggerEvent::Started, this, &ALMyCharacter::StartFire);
+		UIC->BindAction(IA_Fire, ETriggerEvent::Completed, this, &ALMyCharacter::StopFire);
+		UIC->BindAction(IA_IronSight, ETriggerEvent::Started, this, &ALMyCharacter::StartIronSight);
+		UIC->BindAction(IA_IronSight, ETriggerEvent::Completed, this, &ALMyCharacter::StopIronSight);
 	}
 }
 
@@ -252,5 +251,32 @@ void ALMyCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 			ChildWeapon->SetOwner(this);
 		}
 	}
+}
+
+void ALMyCharacter::ProcessBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
+{
+
+}
+
+void ALMyCharacter::UseItme(AActor* PickedUpItem)
+{
+}
+
+void ALMyCharacter::EatItme(AActor* PickedUpItem)
+{
+}
+
+void ALMyCharacter::EquipItme(AActor* PickedUpItem)
+{
+}
+
+void ALMyCharacter::StartIronSight()
+{
+	bIsIronSight = true;
+}
+
+void ALMyCharacter::StopIronSight()
+{
+	bIsIronSight = false;
 }
 

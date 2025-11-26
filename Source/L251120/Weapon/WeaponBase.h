@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "../Base/ItemBase.h"
 #include "WeaponBase.generated.h"
 
 UCLASS()
-class L251120_API AWeaponBase : public AActor
+class L251120_API AWeaponBase : public AItemBase
 {
 	GENERATED_BODY()
 	
@@ -56,9 +56,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	float TimeofLastShoot = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	FName WeaponName;
-
 	FTimerHandle RefireTimer;
 public:
 	UFUNCTION(BlueprintCallable)
@@ -72,7 +69,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FireProjectile();
-
-	UFUNCTION(BlueprintCallable)
-	FName GetWeaponName();
 };
