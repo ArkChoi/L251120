@@ -10,6 +10,7 @@
 #include "GameFramework/Character.h"
 #include "BaseDamageType.h"
 #include "TimerManager.h"
+#include "ProjectileBase.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -65,6 +66,10 @@ void AWeaponBase::Fire()
 	{
 		return;
 	}
+
+	FTransform SpawnTransform = Mesh->GetSocketTransform(TEXT("Muzzle"));
+
+	GetWorld()->SpawnActor<AProjectileBase>(ProjectileTemplate, SpawnTransform);
 
 	APlayerController* PC = Cast<APlayerController>(Character->GetController());
 	if (PC)
