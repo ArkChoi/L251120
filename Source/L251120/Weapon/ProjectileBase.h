@@ -47,6 +47,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	FHitResult HitResult;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<class UParticleSystem> BloodEffect;
+
+
 	UFUNCTION()
 	void ProcessBeginOverlap(AActor* OverlapedActor, AActor* OtherActor);
 };

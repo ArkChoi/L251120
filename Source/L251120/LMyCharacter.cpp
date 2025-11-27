@@ -213,6 +213,14 @@ float ALMyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 		PlayAnimMontage(DeathMontage, 1.0f, FName(*SectionName));
 	}
 
+	/*UGameplayStatics::SpawnEmitterAtLocation(
+		GetWorld(),
+		BloodEffect,
+		this->GetActorLocation(),
+
+		);
+	this->AddControllerPitchInput(-0.05f);*/
+
 	return 0.0f;
 }
 

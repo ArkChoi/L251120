@@ -93,6 +93,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	uint8 bIsIronSight : 1 = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<class UParticleSystem> BloodEffect;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Move(float Forward, float Right);

@@ -7,6 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/DecalComponent.h"
+#include "GameFramework/Character.h"
 
 // Sets default values
 AProjectileBase::AProjectileBase()
@@ -43,16 +44,29 @@ void AProjectileBase::Tick(float DeltaTime)
 
 void AProjectileBase::ProcessBeginOverlap(AActor* OverlapedActor, AActor* OtherActor)
 {
-	UDecalComponent* MadeDecal = UGameplayStatics::SpawnDecalAtLocation(
-		GetWorld(),
-		Decal,
-		FVector(5, 5, 5),
-		HitResult.ImpactPoint,
-		HitResult.ImpactNormal.Rotation(),
-		5.f
-	);
 
-	MadeDecal->SetFadeScreenSize(0.0005f);
+	ACharacter* HitCharacter = Cast<ACharacter>(OtherActor);
+	if (HitCharacter)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			BloodEffect,
+			HitResult.ImpactPoint,
+			HitResult.ImpactNormal.Rotation()
+		);
+	}
+	else
+	{
+		UDecalComponent* MadeDecal = UGameplayStatics::SpawnDecalAtLocation(
+			GetWorld(),
+			Decal,
+			FVector(5, 5, 5),
+			HitResult.ImpactPoint,
+			HitResult.ImpactNormal.Rotation(),
+			5.f
+		);
+		MadeDecal->SetFadeScreenSize(0.0005f);
+	}
 
 	//RPG 
 //UGameplayStatics::ApplyDamage(HitResult.GetActor(),
@@ -83,4 +97,5 @@ void AProjectileBase::ProcessBeginOverlap(AActor* OverlapedActor, AActor* OtherA
 	//	PC,
 	//	true
 	//);
+	Destroy();
 }
