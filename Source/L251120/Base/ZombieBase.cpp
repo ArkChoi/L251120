@@ -31,17 +31,8 @@ void AZombieBase::BeginPlay()
 void AZombieBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	/*UGameplayStatics::GetAllActorsOfClass(GetWorld(),);
-
-	AddMovementInput();*/
-	APawn* TargetPawn = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn();
-
-	FVector Direction = TargetPawn->GetActorLocation() - GetActorLocation();
-	AddMovementInput(Direction, 1);
-
-	FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetPawn->GetActorLocation());
-	SetActorRotation(Rotation);
+	
+	//BT로 넘어감
 }
 
 float AZombieBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
