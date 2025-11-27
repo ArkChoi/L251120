@@ -150,4 +150,5 @@ void AWeaponBase::FireProjectile(FTransform SpawnTransform, FHitResult InHitResu
 {
 	AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileTemplate, SpawnTransform);
 	Projectile->HitResult = InHitResult;
+	Projectile->SetOwner(this);
 }

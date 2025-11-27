@@ -17,6 +17,7 @@
 #include "Engine/DamageEvents.h"
 #include "Sound/SoundCue.h"
 #include "weapon/FloorWeaponBase.h"
+#include "Components/DecalComponent.h"
 
 // Sets default values
 ALMyCharacter::ALMyCharacter()
@@ -189,6 +190,7 @@ float ALMyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 			CurrentHP -= DamageAmount;
 			UE_LOG(LogTemp, Warning, TEXT("Point Damage %f %s"), CurrentHP, *(Event->HitInfo.BoneName.ToString()));
 		}
+		SpawnHitEffect(Event->HitInfo);
 	}
 	else if (DamageEvent.IsOfType(FRadialDamageEvent::ClassID))
 	{
@@ -222,6 +224,19 @@ float ALMyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	this->AddControllerPitchInput(-0.05f);*/
 
 	return 0.0f;
+}
+
+void ALMyCharacter::SpawnHitEffect(const FHitResult& Hit)
+{
+	if (BloodEffect)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			BloodEffect,
+			Hit.ImpactPoint,
+			Hit.ImpactNormal.Rotation()
+		);
+	}
 }
 
 void ALMyCharacter::DoDead()

@@ -129,6 +129,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
+	UFUNCTION()
+	virtual void SpawnHitEffect(const FHitResult& Hit);
+
 	UFUNCTION(BlueprintCallable)
 	void DoDead();
 

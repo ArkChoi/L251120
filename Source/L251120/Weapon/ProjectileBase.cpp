@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/DecalComponent.h"
 #include "GameFramework/Character.h"
+#include "BaseDamageType.h"
 
 // Sets default values
 AProjectileBase::AProjectileBase()
@@ -25,6 +26,8 @@ AProjectileBase::AProjectileBase()
 	Movement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Movement"));
 	Movement->MaxSpeed = 8000.0f;
 	Movement->InitialSpeed = 8000.0f;
+
+	
 }
 
 // Called when the game starts or when spawned
@@ -32,7 +35,9 @@ void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	OnActorBeginOverlap.AddDynamic(this, &AProjectileBase::ProcessBeginOverlap);
+	//OnActorBeginOverlap.AddDynamic(this, &AProjectileBase::ProcessBeginOverlap);
+	Box->OnComponentHit.AddDynamic(this, &AProjectileBase::ProcessComponentHit);
+
 }
 
 // Called every frame
@@ -45,7 +50,7 @@ void AProjectileBase::Tick(float DeltaTime)
 void AProjectileBase::ProcessBeginOverlap(AActor* OverlapedActor, AActor* OtherActor)
 {
 
-	ACharacter* HitCharacter = Cast<ACharacter>(OtherActor);
+	/*ACharacter* HitCharacter = Cast<ACharacter>(OtherActor);
 	if (HitCharacter)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(
@@ -54,19 +59,7 @@ void AProjectileBase::ProcessBeginOverlap(AActor* OverlapedActor, AActor* OtherA
 			HitResult.ImpactPoint,
 			HitResult.ImpactNormal.Rotation()
 		);
-	}
-	else
-	{
-		UDecalComponent* MadeDecal = UGameplayStatics::SpawnDecalAtLocation(
-			GetWorld(),
-			Decal,
-			FVector(5, 5, 5),
-			HitResult.ImpactPoint,
-			HitResult.ImpactNormal.Rotation(),
-			5.f
-		);
-		MadeDecal->SetFadeScreenSize(0.0005f);
-	}
+	}*/
 
 	//RPG 
 //UGameplayStatics::ApplyDamage(HitResult.GetActor(),
@@ -98,4 +91,40 @@ void AProjectileBase::ProcessBeginOverlap(AActor* OverlapedActor, AActor* OtherA
 	//	true
 	//);
 	Destroy();
+}
+
+void AProjectileBase::ProcessComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	SpawnHitEffect(Hit);
+
+	APawn* Pawn = Cast<APawn>(GetOwner()->GetOwner());
+
+	//ÃÑ½î´Â µ¥¹ÌÁö
+	UGameplayStatics::ApplyPointDamage(HitResult.GetActor(),
+		Damage,
+		-HitResult.ImpactNormal,
+		HitResult,
+		Pawn->GetController(),
+		this,
+		UBaseDamageType::StaticClass()
+	);
+}
+
+void AProjectileBase::SpawnHitEffect(const FHitResult& Hit)
+{
+	if (Decal)
+	{
+		UDecalComponent* MadeDecal = UGameplayStatics::SpawnDecalAtLocation(
+			GetWorld(),
+			Decal,
+			FVector(5, 5, 5),
+			Hit.ImpactPoint,
+			Hit.ImpactNormal.Rotation(),
+			5.f
+		);
+		if (MadeDecal)
+		{
+			MadeDecal->SetFadeScreenSize(0.0005f);
+		}
+	}
 }
