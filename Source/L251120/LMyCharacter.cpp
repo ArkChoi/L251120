@@ -250,6 +250,11 @@ void ALMyCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 			WeaponState = EWeaponState::Rifle;
 			ChildWeapon->SetOwner(this);
 		}
+
+		if (!TempWeapon->bIsInfinity)
+		{
+			TempWeapon->Destroy();
+		}
 	}
 }
 

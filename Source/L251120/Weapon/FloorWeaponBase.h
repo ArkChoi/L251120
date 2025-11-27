@@ -36,4 +36,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VALUE")
 	EWeaponState WeaponState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VALUE")
+	uint8 bIsInfinity : 1 = false;
 };

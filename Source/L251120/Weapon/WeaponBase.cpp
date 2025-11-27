@@ -11,6 +11,7 @@
 #include "BaseDamageType.h"
 #include "TimerManager.h"
 #include "ProjectileBase.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -67,10 +68,6 @@ void AWeaponBase::Fire()
 		return;
 	}
 
-	FTransform SpawnTransform = Mesh->GetSocketTransform(TEXT("Muzzle"));
-
-	GetWorld()->SpawnActor<AProjectileBase>(ProjectileTemplate, SpawnTransform);
-
 	APlayerController* PC = Cast<APlayerController>(Character->GetController());
 	if (PC)
 	{
@@ -119,47 +116,23 @@ void AWeaponBase::Fire()
 			true
 		);
 
-		if (bResult)
-		{
-			//RPG 
-			//UGameplayStatics::ApplyDamage(HitResult.GetActor(),
-			//	10,
-			//	PC,
-			//	this,
-			//	UBaseDamageType::StaticClass()
-			//);
+		FVector SpawnLocation = Mesh->GetSocketLocation(TEXT("Muzzle"));
+		FVector TargetLocation = bResult ? HitResult.ImpactPoint : End;
+		FVector BulletDirection = (TargetLocation - SpawnLocation).GetSafeNormal(); //?
 
-			////ÃÑ½î´Â µ¥¹ÌÁö
-			UGameplayStatics::ApplyPointDamage(HitResult.GetActor(),
-				10,
-				-HitResult.ImpactNormal,
-				HitResult,
-				PC,
-				this,
-				UBaseDamageType::StaticClass()
-			);
+		FRotator AimRotation = UKismetMathLibrary::FindLookAtRotation(SpawnLocation, TargetLocation + (UKismetMathLibrary::RandomUnitVector() * 20.f));
 
-			////¹üÀ§ °ø°Ý, ÆøÅº
-			/*UGameplayStatics::ApplyRadialDamage(HitResult.GetActor(),
-				10,
-				HitResult.ImpactPoint,
-				300.0f,
-				UBaseDamageType::StaticClass(),
-				IngnoreActors,
-				this,
-				PC,
-				true
-			);*/
+		FTransform SpawnTransform(AimRotation, SpawnLocation, FVector::OneVector); //OneVector ?
 
-			UGameplayStatics::PlaySound2D(GetWorld(), FireSoundCue);
-			UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitResult.GetActor()->GetName());
-		}
+		GetWorld()->SpawnActor<AProjectileBase>(ProjectileTemplate, SpawnTransform);
+
+		CurrentBulletCount--;
+		UE_LOG(LogTemp, Warning, TEXT("Fire %d"), CurrentBulletCount);
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FireSoundCue, GetActorLocation());
+		TimeofLastShoot = GetWorld()->TimeSeconds;
+
+		Character->AddControllerPitchInput(-0.05f);
 	}
-
-	CurrentBulletCount--;
-	UE_LOG(LogTemp, Warning, TEXT("Fire %d"), CurrentBulletCount);
-	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FireSoundCue, GetActorLocation());
-	TimeofLastShoot = GetWorld()->TimeSeconds;
 }
 
 void AWeaponBase::StopFire()
