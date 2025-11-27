@@ -37,7 +37,8 @@ void AProjectileBase::BeginPlay()
 	
 	//OnActorBeginOverlap.AddDynamic(this, &AProjectileBase::ProcessBeginOverlap);
 	Box->OnComponentHit.AddDynamic(this, &AProjectileBase::ProcessComponentHit);
-
+	
+	SetLifeSpan(5.0f);
 }
 
 // Called every frame
