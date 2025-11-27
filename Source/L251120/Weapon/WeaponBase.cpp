@@ -111,7 +111,7 @@ void AWeaponBase::Fire()
 			ObjectTypes,
 			true,
 			IngnoreActors,
-			EDrawDebugTrace::ForDuration,
+			EDrawDebugTrace::None,
 			HitResult,
 			true
 		);
@@ -122,15 +122,21 @@ void AWeaponBase::Fire()
 
 		FRotator AimRotation = UKismetMathLibrary::FindLookAtRotation(SpawnLocation, TargetLocation + (UKismetMathLibrary::RandomUnitVector() * 20.f));
 
-		FTransform SpawnTransform(AimRotation, SpawnLocation, FVector::OneVector); //OneVector ?
-
-		GetWorld()->SpawnActor<AProjectileBase>(ProjectileTemplate, SpawnTransform);
+		FireProjectile(FTransform(AimRotation, SpawnLocation, FVector::OneVector), HitResult);//OneVector ?
 
 		CurrentBulletCount--;
 		UE_LOG(LogTemp, Warning, TEXT("Fire %d"), CurrentBulletCount);
 		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FireSoundCue, GetActorLocation());
 		TimeofLastShoot = GetWorld()->TimeSeconds;
 
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			MuzzleFlash,
+			SpawnLocation,
+			AimRotation
+		);
+
+		//Recoil
 		Character->AddControllerPitchInput(-0.05f);
 	}
 }
@@ -140,7 +146,8 @@ void AWeaponBase::StopFire()
 	GetWorld()->GetTimerManager().ClearTimer(RefireTimer);
 }
 
-void AWeaponBase::FireProjectile()
+void AWeaponBase::FireProjectile(FTransform SpawnTransform, FHitResult InHitResult)
 {
-
+	AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileTemplate, SpawnTransform);
+	Projectile->HitResult = InHitResult;
 }

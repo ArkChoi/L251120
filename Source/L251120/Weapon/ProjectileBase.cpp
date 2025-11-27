@@ -5,7 +5,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "Components/DecalComponent.h"
 
 // Sets default values
 AProjectileBase::AProjectileBase()
@@ -42,6 +43,17 @@ void AProjectileBase::Tick(float DeltaTime)
 
 void AProjectileBase::ProcessBeginOverlap(AActor* OverlapedActor, AActor* OtherActor)
 {
+	UDecalComponent* MadeDecal = UGameplayStatics::SpawnDecalAtLocation(
+		GetWorld(),
+		Decal,
+		FVector(5, 5, 5),
+		HitResult.ImpactPoint,
+		HitResult.ImpactNormal.Rotation(),
+		5.f
+	);
+
+	MadeDecal->SetFadeScreenSize(0.0005f);
+
 	//RPG 
 //UGameplayStatics::ApplyDamage(HitResult.GetActor(),
 //	50,

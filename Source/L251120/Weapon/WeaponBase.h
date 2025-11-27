@@ -57,6 +57,10 @@ public:
 	float TimeofLastShoot = 0.0f;
 
 	FTimerHandle RefireTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<class UParticleSystem> MuzzleFlash;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Reload();
@@ -68,5 +72,5 @@ public:
 	void StopFire();
 
 	UFUNCTION(BlueprintCallable)
-	void FireProjectile();
+	void FireProjectile(FTransform SpawnTransform, FHitResult InHitResult);
 };
