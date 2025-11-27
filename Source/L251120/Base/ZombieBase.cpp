@@ -6,6 +6,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/GameplayStatics.h"
+#include "../LMyCharacter.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AZombieBase::AZombieBase()
@@ -30,6 +32,16 @@ void AZombieBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	/*UGameplayStatics::GetAllActorsOfClass(GetWorld(),);
+
+	AddMovementInput();*/
+	APawn* TargetPawn = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPawn();
+
+	FVector Direction = TargetPawn->GetActorLocation() - GetActorLocation();
+	AddMovementInput(Direction, 1);
+
+	FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetPawn->GetActorLocation());
+	SetActorRotation(Rotation);
 }
 
 float AZombieBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

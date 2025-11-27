@@ -48,6 +48,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<class UParticleSystem> BloodEffect;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<class UParticleSystem> Player;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
