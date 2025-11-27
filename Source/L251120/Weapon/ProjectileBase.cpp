@@ -19,6 +19,8 @@ AProjectileBase::AProjectileBase()
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
 	RootComponent = Box;
 	Box->SetBoxExtent(FVector(10, 10, 10));
+	//Simulation Generated Hit Event
+	Box->GetBodyInstance()->bNotifyRigidBodyCollision = true;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(Box);
