@@ -115,3 +115,8 @@ void AZombie_AIC::ProcessActorPerceptionForgetUpdated(AActor* Actor)
 //{
 //	UE_LOG(LogTemp, Warning, TEXT("ProcessActorPerceptionForgetUpdated %s"), *UpdateInfo.Target->GetName());
 //}
+
+void AZombie_AIC::SetState(EZombieState NewState)
+{
+	Blackboard->SetValueAsEnum(TEXT("CurrentState"), (uint8)(NewState));
+}

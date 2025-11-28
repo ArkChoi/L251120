@@ -8,7 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "../LMyCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "../Zombie/Zombie_AIC.h"
 
 // Sets default values
 AZombieBase::AZombieBase()
@@ -68,8 +68,12 @@ float AZombieBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 
 	if (CurrentHP <= 0)
 	{
-		FString SectionName = FString::Printf(TEXT("%d"), FMath::RandRange(1, 8));
-		PlayAnimMontage(DeathMontage, 1.0f, FName(*SectionName));
+		SetState(EZombieState::Death);
+		AZombie_AIC* AIC = Cast<AZombie_AIC>(GetController());
+		if (AIC)
+		{
+			AIC->SetState(CurrentState);
+		}
 	}
 
 	return 0.0f;

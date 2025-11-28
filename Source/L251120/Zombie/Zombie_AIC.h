@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "../Base/ZombieBase.h"
 #include "Zombie_AIC.generated.h"
 
 /**
@@ -40,4 +41,5 @@ public:
 	/*UFUNCTION()
 	void ProcessActorPerceptionInfoUpdated (const FActorPerceptionUpdateInfo& UpdateInfo);*/
 
+	void SetState(EZombieState NewState);
 };
