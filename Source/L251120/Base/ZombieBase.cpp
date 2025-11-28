@@ -93,3 +93,8 @@ void AZombieBase::DoDead()
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetSimulatePhysics(true);
 }
+
+void AZombieBase::SetState(EZombieState NewState)
+{
+	CurrentState = NewState;
+}

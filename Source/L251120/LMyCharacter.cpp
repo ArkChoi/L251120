@@ -18,6 +18,7 @@
 #include "Sound/SoundCue.h"
 #include "weapon/FloorWeaponBase.h"
 #include "Components/DecalComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 
 // Sets default values
 ALMyCharacter::ALMyCharacter()
@@ -42,7 +43,7 @@ ALMyCharacter::ALMyCharacter()
 	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
 	Weapon->SetupAttachment(GetMesh());
 
-
+	StimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimuliSource"));
 }
 
 // Called when the game starts or when spawned

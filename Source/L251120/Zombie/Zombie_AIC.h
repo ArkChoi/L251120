@@ -14,4 +14,30 @@ class L251120_API AZombie_AIC : public AAIController
 {
 	GENERATED_BODY()
 	
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<class UAIPerceptionComponent> Perception;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<class UBehaviorTree> RunBTAsset;
+
+public:
+	AZombie_AIC();
+
+	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnUnPossess() override;
+
+	UFUNCTION()
+	void ProcessPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+
+	UFUNCTION()
+	void ProcessActorPerceptionUpdated (AActor* Actor, FAIStimulus Stimulus);
+
+	UFUNCTION()
+	void ProcessActorPerceptionForgetUpdated(AActor* Actor);
+
+	UFUNCTION()
+	void ProcessActorPerceptionInfoUpdated (const FActorPerceptionUpdateInfo& UpdateInfo);
+
 };

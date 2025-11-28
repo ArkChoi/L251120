@@ -61,4 +61,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DoDead();
 
+	UFUNCTION(BlueprintCallable)
+	void SetState(EZombieState NewState);
+
 };

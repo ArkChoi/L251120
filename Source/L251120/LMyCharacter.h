@@ -96,6 +96,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<class UParticleSystem> BloodEffect;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<class UAIPerceptionStimuliSourceComponent> StimuliSource;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Move(float Forward, float Right);
