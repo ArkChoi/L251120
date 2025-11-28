@@ -17,7 +17,7 @@ AZombie_AIC::AZombie_AIC()
 	UAISenseConfig_Sight * Sight = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight"));
 	Sight->SightRadius = 300.f;
 	Sight->LoseSightRadius = 400.f;
-	Sight->PeripheralVisionAngleDegrees = 45.f;
+	Sight->PeripheralVisionAngleDegrees = 90.f;
 	Sight->DetectionByAffiliation.bDetectEnemies = true;
 	Sight->DetectionByAffiliation.bDetectFriendlies = false;
 	Sight->DetectionByAffiliation.bDetectNeutrals = false;
@@ -64,16 +64,31 @@ void AZombie_AIC::ProcessActorPerceptionUpdated(AActor* Actor, FAIStimulus Stimu
 
 	if (Stimulus.Type == UAISense::GetSenseID<UAISense_Sight>())
 	{
-		ALMyCharacter* Player = Cast<ALMyCharacter>(Actor);
-		AZombieBase* Zombie = Cast<AZombieBase>(GetPawn());
-
-		if (Player && Zombie)
+		if (Stimulus.WasSuccessfullySensed())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ProcessActorPerceptionUpdated"));
-			Blackboard->SetValueAsObject(TEXT("Target"), Player);
-			Blackboard->SetValueAsEnum(TEXT("CurrentState"), (uint8)(EZombieState::Chase));
-			Zombie->SetState(EZombieState::Chase);
-			Zombie->ChangeSpeed(300.f);
+			ALMyCharacter* Player = Cast<ALMyCharacter>(Actor);
+			AZombieBase* Zombie = Cast<AZombieBase>(GetPawn());
+
+			if (Player && Zombie)
+			{
+				Blackboard->SetValueAsObject(TEXT("Target"), Player);
+				Blackboard->SetValueAsEnum(TEXT("CurrentState"), (uint8)(EZombieState::Chase));
+				Zombie->SetState(EZombieState::Chase);
+				Zombie->ChangeSpeed(300.f);
+			}
+		}
+		else
+		{
+			ALMyCharacter* Player = Cast<ALMyCharacter>(Actor);
+			AZombieBase* Zombie = Cast<AZombieBase>(GetPawn());
+
+			if (Player && Zombie)
+			{
+				Blackboard->SetValueAsObject(TEXT("Target"), nullptr);
+				Blackboard->SetValueAsEnum(TEXT("CurrentState"), (uint8)(EZombieState::Normal));
+				Zombie->SetState(EZombieState::Normal);
+				Zombie->ChangeSpeed(60.f);
+			}
 		}
 	}
 
@@ -88,7 +103,6 @@ void AZombie_AIC::ProcessActorPerceptionForgetUpdated(AActor* Actor)
 
 	if (Player && Zombie)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("1"));
 		Blackboard->SetValueAsObject(TEXT("Target"), nullptr);
 		Blackboard->SetValueAsEnum(TEXT("CurrentState"), (uint8)(EZombieState::Normal));
 		Zombie->SetState(EZombieState::Normal);
