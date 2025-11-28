@@ -41,6 +41,8 @@ void AZombie_AIC::OnPossess(APawn* InPawn)
 
 void AZombie_AIC::OnUnPossess()
 {
+
+
 	Super::OnUnPossess();
 }
 
