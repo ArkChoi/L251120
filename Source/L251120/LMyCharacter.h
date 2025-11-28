@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Weapon/WeaponName.h"
+#include "GenericTeamAgentInterface.h"
 #include "LMyCharacter.generated.h"
 
 //UENUM(BlueprintType)
@@ -16,7 +17,7 @@
 //};
 
 UCLASS()
-class L251120_API ALMyCharacter : public ACharacter
+class L251120_API ALMyCharacter : public ACharacter , public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -158,4 +159,21 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void StopIronSight();
+
+	//----------------------------------------------------------------------//
+	// IGenericTeamAgentInterface
+	//----------------------------------------------------------------------//
+
+	/** Assigns Team Agent to given TeamID */
+	virtual void SetGenericTeamId(const FGenericTeamId& InTeamID) override;
+
+	/** Retrieve team identifier in form of FGenericTeamId */
+	virtual FGenericTeamId GetGenericTeamId() const override;
+
+	//----------------------------------------------------------------------//
+	// IGenericTeamAgentInterface
+	//----------------------------------------------------------------------//
+private:
+	FGenericTeamId TeamID;
+
 };

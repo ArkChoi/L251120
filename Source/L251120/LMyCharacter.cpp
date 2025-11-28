@@ -44,6 +44,8 @@ ALMyCharacter::ALMyCharacter()
 	Weapon->SetupAttachment(GetMesh());
 
 	StimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimuliSource"));
+
+	TeamID = 1;
 }
 
 // Called when the game starts or when spawned
@@ -307,5 +309,15 @@ void ALMyCharacter::StartIronSight()
 void ALMyCharacter::StopIronSight()
 {
 	bIsIronSight = false;
+}
+
+void ALMyCharacter::SetGenericTeamId(const FGenericTeamId& InTeamID)
+{
+	TeamID = InTeamID;
+}
+
+FGenericTeamId ALMyCharacter::GetGenericTeamId() const
+{
+	return TeamID;
 }
 
