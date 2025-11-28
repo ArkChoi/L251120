@@ -28,8 +28,8 @@ public:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
 
-	UFUNCTION()
-	void ProcessPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+	/*UFUNCTION()
+	void ProcessPerceptionUpdated(const TArray<AActor*>& UpdatedActors);*/
 
 	UFUNCTION()
 	void ProcessActorPerceptionUpdated (AActor* Actor, FAIStimulus Stimulus);
@@ -37,7 +37,7 @@ public:
 	UFUNCTION()
 	void ProcessActorPerceptionForgetUpdated(AActor* Actor);
 
-	UFUNCTION()
-	void ProcessActorPerceptionInfoUpdated (const FActorPerceptionUpdateInfo& UpdateInfo);
+	/*UFUNCTION()
+	void ProcessActorPerceptionInfoUpdated (const FActorPerceptionUpdateInfo& UpdateInfo);*/
 
 };

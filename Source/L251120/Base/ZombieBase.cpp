@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "../LMyCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AZombieBase::AZombieBase()
@@ -97,4 +98,10 @@ void AZombieBase::DoDead()
 void AZombieBase::SetState(EZombieState NewState)
 {
 	CurrentState = NewState;
+
+}
+
+void AZombieBase::ChangeSpeed(float NewMaxSpeed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = NewMaxSpeed;
 }

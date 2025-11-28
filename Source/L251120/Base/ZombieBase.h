@@ -64,4 +64,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetState(EZombieState NewState);
 
+	UFUNCTION(BlueprintCallable)
+	void ChangeSpeed(float NewMaxSpeed);
+
 };
