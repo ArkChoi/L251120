@@ -14,13 +14,23 @@ UBTService_Look::UBTService_Look()
 
 void UBTService_Look::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	AActor* Target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(TEXT("Target")));
-	if (Target)
+	AActor* Player = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(TEXT("Target")));
+	if (Player)
 	{
 		FVector ZombieLocation = OwnerComp.GetAIOwner()->GetPawn()->GetActorLocation();
-		FVector PlayerLocation = Target->GetActorLocation();
+		FVector PlayerLocation = Player->GetActorLocation();
 
 		FRotator TargetPoint = UKismetMathLibrary::FindLookAtRotation(ZombieLocation, PlayerLocation);
-		OwnerComp.GetAIOwner()->GetPawn()->SetActorRotation(TargetPoint);
+
+		TargetPoint.Pitch = 0;
+
+		FRotator TargetRotation = FMath::RInterpTo(
+			OwnerComp.GetAIOwner()->GetPawn()->GetActorRotation(),
+			TargetPoint,
+			DeltaSeconds,
+			15.f
+			);
+
+		OwnerComp.GetAIOwner()->GetPawn()->SetActorRotation(TargetRotation);
 	}
 }
