@@ -72,7 +72,7 @@ float AZombieBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEven
 		AZombie_AIC* AIC = Cast<AZombie_AIC>(GetController());
 		if (AIC)
 		{
-			AIC->SetState(CurrentState);
+			AIC->SetState(GetState());
 		}
 	}
 
