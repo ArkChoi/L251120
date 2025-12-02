@@ -21,4 +21,6 @@ class L251120_API ANetworkGMBase : public AGameModeBase
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	virtual void BeginPlay() override;
+
+	virtual void StartPlay() override;
 };

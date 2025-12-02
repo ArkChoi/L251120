@@ -14,4 +14,7 @@ class L251120_API ANetworkPC : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void BeginPlay() override;
+
 };
