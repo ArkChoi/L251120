@@ -50,4 +50,5 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateLeftTime(int32 InLeftTime);
+
 };

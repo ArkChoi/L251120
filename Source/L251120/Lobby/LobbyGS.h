@@ -3,8 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/ObjectMacros.h"
+
 #include "GameFramework/GameStateBase.h"
 #include "LobbyGS.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeLeftTime, const int32, InLeftTime);
 
 /**
  * 
@@ -17,11 +21,15 @@ class L251120_API ALobbyGS : public AGameStateBase
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override; //Replicated 키워드 쓰려면 꼭 재정의 해줘야함
 
+	UFUNCTION()
+	void OnRep_LeftTime();
+
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", ReplicatedUsing="OnRep_LeftTime")
 	int32 LeftTime = 60;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)
 	int32 ConnectionCount = 0;
 
+	FOnChangeLeftTime OnChangeLeftTime;
 };

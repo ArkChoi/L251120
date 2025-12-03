@@ -37,6 +37,7 @@ void ALobbyGM::BeginPlay()
 			if (GS)
 			{
 				GS->LeftTime--;
+				GS->OnRep_LeftTime();
 			}
 		}),
 		1.0f,

@@ -7,6 +7,7 @@
 #include "Components/ScrollBox.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
+#include "LobbyGS.h"
 
 void ULobbyWidget::NativeOnInitialized()
 {
@@ -21,6 +22,14 @@ void ULobbyWidget::NativeOnInitialized()
 		ChatInput->OnTextCommitted.AddDynamic(this, &ULobbyWidget::ProcessOnCommite);
 		ChatInput->OnTextChanged.AddDynamic(this, &ULobbyWidget::ProcessOnChange);
 	}
+
+	ALobbyGS* GS = Cast<ALobbyGS>(UGameplayStatics::GetGameState((GetWorld())));
+	if (GS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bind"));
+		GS->OnChangeLeftTime.AddDynamic(this, &ULobbyWidget::UpdateLeftTime);
+	}
+
 }
 
 void ULobbyWidget::Start()
@@ -41,6 +50,7 @@ void ULobbyWidget::UpdateLeftTime(int32 InLeftTime)
 {
 	if (LeftTime)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Update"));
 		FString Message = FString::Printf(TEXT("%d\'s late"), InLeftTime);
 		LeftTime->SetText(FText::FromString(Message));
 	}
