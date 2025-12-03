@@ -40,4 +40,7 @@ public:
 
 	UFUNCTION()
 	void Connect();
+
+	UFUNCTION()
+	void SaveData();
 };
