@@ -28,6 +28,7 @@ void ULobbyWidget::NativeOnInitialized()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Bind"));
 		GS->OnChangeLeftTime.AddDynamic(this, &ULobbyWidget::UpdateLeftTime);
+		GS->OnChangeConnectionCount.AddDynamic(this, &ULobbyWidget::UpdateConnectionCount);
 	}
 
 }
@@ -50,8 +51,18 @@ void ULobbyWidget::UpdateLeftTime(int32 InLeftTime)
 {
 	if (LeftTime)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Update"));
+		//UE_LOG(LogTemp, Warning, TEXT("Update"));
 		FString Message = FString::Printf(TEXT("%d\'s late"), InLeftTime);
 		LeftTime->SetText(FText::FromString(Message));
+	}
+}
+
+void ULobbyWidget::UpdateConnectionCount(int32 InConnectionCount)
+{
+	if (ConnectionCount)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Update"));
+		FString Message = FString::Printf(TEXT("%d Connection"), InConnectionCount);
+		ConnectionCount->SetText(FText::FromString(Message));
 	}
 }
