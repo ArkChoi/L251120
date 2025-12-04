@@ -24,6 +24,8 @@ public:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	virtual void BeginPlay() override;
+
+	void CheckConnectionCount();
 	
 public:
 	FTimerHandle LeftTimerHandle;

@@ -24,12 +24,7 @@ void ALobbyGM::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-	ALobbyGS* GS = GetGameState<ALobbyGS>();
-	if (GS)
-	{
-		GS->ConnectionCount++;
-		GS->OnRep_ConnectionCount();
-	}
+	CheckConnectionCount();
 }
 
 void ALobbyGM::BeginPlay()
@@ -50,4 +45,21 @@ void ALobbyGM::BeginPlay()
 		1.0f,
 		true,
 		0.f);
+
+}
+
+void ALobbyGM::CheckConnectionCount()
+{
+	ALobbyGS* GS = GetGameState<ALobbyGS>();
+	if (GS)
+	{
+		int32 TempCount = 0;
+		for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; Iter++)
+		{
+			TempCount++;
+		}
+
+		GS->ConnectionCount = TempCount;
+		GS->OnRep_ConnectionCount();
+	}
 }

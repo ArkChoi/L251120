@@ -21,6 +21,7 @@ class L251120_API ALobbyGS : public AGameStateBase
 	GENERATED_BODY()
 	
 public:
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override; //Replicated 키워드 쓰려면 꼭 재정의 해줘야함
 
 	UFUNCTION()
@@ -39,4 +40,6 @@ public:
 	FOnChangeLeftTime OnChangeLeftTime;
 
 	FOnChangeConnectionCount OnChangeConnectionCount;
+
+	virtual void BeginPlay() override;
 };

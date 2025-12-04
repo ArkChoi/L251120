@@ -6,8 +6,11 @@
 #include "Components/EditableTextBox.h"
 #include "Components/ScrollBox.h"
 #include "Components/Button.h"
+#include "Components/RichTextBlock.h"
 #include "Kismet/GameplayStatics.h"
 #include "LobbyGS.h"
+#include "LobbyPC.h"
+#include "../Title/DataGameInstanceSubsystem.h"
 
 void ULobbyWidget::NativeOnInitialized()
 {
@@ -40,7 +43,39 @@ void ULobbyWidget::Start()
 
 void ULobbyWidget::ProcessOnCommite(const FText& Text, ETextCommit::Type CommitMethod)
 {
+	switch (CommitMethod)
+	{
+		case ETextCommit::Default:
+			break;
+		case ETextCommit::OnEnter:
+		{
+			ALobbyPC* PC = Cast<ALobbyPC>(GetOwningPlayer());
+			if (PC)
+			{
+				UGameInstance* GI = UGameplayStatics::GetGameInstance(GetWorld());
+				if (GI)
+				{
+					UDataGameInstanceSubsystem* MySubsystem = GI->GetSubsystem<UDataGameInstanceSubsystem>();
+					//MySubsystem->UserID
+					FString Temp = FString::Printf(TEXT("%s : %s"), *MySubsystem->UserID, *Text.ToString());
 
+					//Local PC Call -> Server PC execute
+					PC->SendMessage(FText::FromString(Temp));
+					ChatInput->SetText(FText::FromString(""));
+				}
+			}
+		}
+			break;
+		case ETextCommit::OnUserMovedFocus:
+			break;
+		case ETextCommit::OnCleared:
+		{
+			ChatInput->SetUserFocus(GetOwningPlayer());
+		}
+			break;
+		default:
+			break;
+	}
 }
 
 void ULobbyWidget::ProcessOnChange(const FText& Text)
@@ -64,5 +99,25 @@ void ULobbyWidget::UpdateConnectionCount(int32 InConnectionCount)
 		UE_LOG(LogTemp, Warning, TEXT("Update"));
 		FString Message = FString::Printf(TEXT("%d Connection"), InConnectionCount);
 		ConnectionCount->SetText(FText::FromString(Message));
+	}
+}
+
+void ULobbyWidget::AddMessage(const FText& Message)
+{
+	if (ChatScrollBox)
+	{
+		UTextBlock* NewMessageBlock = NewObject<UTextBlock>(ChatScrollBox);
+		if (NewMessageBlock)
+		{
+			NewMessageBlock->SetText(Message);
+			FSlateFontInfo FontInfo = NewMessageBlock->GetFont();
+			FontInfo.Size = 32;
+			
+			NewMessageBlock->SetFont(FontInfo);
+			NewMessageBlock->SetColorAndOpacity(FSlateColor(FLinearColor(0, 0, 0)));
+
+			ChatScrollBox->AddChild(NewMessageBlock);
+			ChatScrollBox->ScrollToEnd();
+		}
 	}
 }

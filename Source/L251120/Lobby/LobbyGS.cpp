@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "LobbyWidget.h"
 
+
 void ALobbyGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -30,4 +31,9 @@ void ALobbyGS::OnRep_LeftTime()
 void ALobbyGS::OnRep_ConnectionCount()
 {
 	OnChangeConnectionCount.Broadcast(ConnectionCount);
+}
+
+void ALobbyGS::BeginPlay()
+{
+	Super::BeginPlay();
 }
