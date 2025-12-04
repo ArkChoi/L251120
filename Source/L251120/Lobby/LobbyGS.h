@@ -30,6 +30,8 @@ public:
 	UFUNCTION()
 	void OnRep_ConnectionCount();
 
+	void CountDownLeftTime();
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", ReplicatedUsing="OnRep_LeftTime")
 	int32 LeftTime = 60;

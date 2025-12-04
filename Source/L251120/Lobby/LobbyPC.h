@@ -7,6 +7,7 @@
 #include "LobbyPC.generated.h"
 
 class ULobbyWidget;
+class UUserWidget;
 /**
  * 
  */
@@ -31,7 +32,11 @@ public:
 	UFUNCTION(Client, Reliable)
 	void S2C_SendMessage(const FText& Message);
 	void S2C_SendMessage_Implementation(const FText& Message);
-	
+
+	UFUNCTION(Client, Reliable)
+	void S2C_ShowLoadingScreen();
+	void S2C_ShowLoadingScreen_Implementation();
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TSubclassOf<ULobbyWidget> LobbyWidgetClass;
@@ -39,4 +44,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<ULobbyWidget> LobbyWidgetObject;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TSubclassOf<UUserWidget> LoadingWidgetClass;
 };

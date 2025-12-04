@@ -3,6 +3,7 @@
 
 #include "LobbyGM.h"
 #include "LobbyGS.h"
+#include "LobbyPC.h"
 
 ALobbyGM::ALobbyGM()
 {
@@ -38,12 +39,7 @@ void ALobbyGM::BeginPlay()
 			ALobbyGS* GS = GetGameState<ALobbyGS>();
 			if (GS)
 			{
-				GS->LeftTime--;
-				GS->OnRep_LeftTime();
-				if (GS->LeftTime <= 0)
-				{
-					StartGame();
-				}
+				GS->CountDownLeftTime();
 			}
 		}),
 		1.0f,
@@ -71,6 +67,14 @@ void ALobbyGM::CheckConnectionCount()
 
 void ALobbyGM::StartGame()
 {
-	GetWorld()->ServerTravel(TEXT("Lvl_InGame"));
 	GetWorld()->GetTimerManager().ClearTimer(LeftTimerHandle);
+	for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
+	{
+		ALobbyPC* PC = Cast<ALobbyPC>(*Iter);
+		if (PC)
+		{
+			PC->S2C_ShowLoadingScreen();
+		}
+	}
+	GetWorld()->ServerTravel(TEXT("Lvl_InGame"));
 }

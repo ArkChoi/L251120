@@ -6,6 +6,7 @@
 #include "LobbyPC.h"
 #include "Kismet/GameplayStatics.h"
 #include "LobbyWidget.h"
+#include "LobbyGM.h"
 
 
 void ALobbyGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -31,6 +32,24 @@ void ALobbyGS::OnRep_LeftTime()
 void ALobbyGS::OnRep_ConnectionCount()
 {
 	OnChangeConnectionCount.Broadcast(ConnectionCount);
+}
+
+void ALobbyGS::CountDownLeftTime()
+{
+	//Server
+	if (LeftTime > 0)
+	{
+		LeftTime--;
+		OnRep_LeftTime();
+	}
+	else
+	{
+		ALobbyGM* GM = Cast<ALobbyGM>(UGameplayStatics::GetGameMode(GetWorld()));
+		if (GM)
+		{
+			GM->StartGame();
+		}
+	}
 }
 
 void ALobbyGS::BeginPlay()
