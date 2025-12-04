@@ -26,6 +26,8 @@ public:
 	virtual void BeginPlay() override;
 
 	void CheckConnectionCount();
+
+	void StartGame();
 	
 public:
 	FTimerHandle LeftTimerHandle;

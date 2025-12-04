@@ -40,6 +40,10 @@ void ALobbyGM::BeginPlay()
 			{
 				GS->LeftTime--;
 				GS->OnRep_LeftTime();
+				if (GS->LeftTime <= 0)
+				{
+					StartGame();
+				}
 			}
 		}),
 		1.0f,
@@ -61,5 +65,12 @@ void ALobbyGM::CheckConnectionCount()
 
 		GS->ConnectionCount = TempCount;
 		GS->OnRep_ConnectionCount();
+
 	}
+}
+
+void ALobbyGM::StartGame()
+{
+	GetWorld()->ServerTravel(TEXT("Lvl_InGame"));
+	GetWorld()->GetTimerManager().ClearTimer(LeftTimerHandle);
 }
