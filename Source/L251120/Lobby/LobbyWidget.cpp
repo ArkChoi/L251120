@@ -11,6 +11,7 @@
 #include "LobbyGS.h"
 #include "LobbyPC.h"
 #include "../Title/DataGameInstanceSubsystem.h"
+#include "LobbyGM.h"
 
 void ULobbyWidget::NativeOnInitialized()
 {
@@ -38,8 +39,11 @@ void ULobbyWidget::NativeOnInitialized()
 
 void ULobbyWidget::Start()
 {
-	GetWorld()->ServerTravel(TEXT("Lvl_InGame"));
-	GetWorld()->GetTimerManager().ClearTimer(LeftTimerHandle);
+	ALobbyGM* GM = Cast<ALobbyGM>(GetWorld()->GetAuthGameMode());
+	if (GM)
+	{
+		GM->StartGame();
+	}
 }
 
 void ULobbyWidget::ProcessOnCommite(const FText& Text, ETextCommit::Type CommitMethod)
