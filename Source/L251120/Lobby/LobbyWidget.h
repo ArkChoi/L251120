@@ -11,6 +11,9 @@ class UEditableTextBox;
 class UTextBlock;
 class UScrollBox;
 
+class UDataTable;
+class UWidgetAnimation;
+
 /**
  * 
  */
@@ -38,6 +41,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component", meta = (BindWidget))
 	TObjectPtr<UScrollBox> ChatScrollBox;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<UDataTable> ChatTextStyle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<UWidgetAnimation> StartAnimation;
 
 public:
 	UFUNCTION()
@@ -55,4 +63,6 @@ public:
 	void UpdateConnectionCount(int32 InConnectionCount);
 
 	void AddMessage(const FText& Message);
+
+	void ShowStartButton();
 };

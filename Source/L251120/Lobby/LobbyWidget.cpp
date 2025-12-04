@@ -38,7 +38,7 @@ void ULobbyWidget::NativeOnInitialized()
 
 void ULobbyWidget::Start()
 {
-	GetWorld()->ServerTravel(TEXT("InGame"));
+	GetWorld()->ServerTravel(TEXT("Lvl_InGame"));
 }
 
 void ULobbyWidget::ProcessOnCommite(const FText& Text, ETextCommit::Type CommitMethod)
@@ -106,18 +106,30 @@ void ULobbyWidget::AddMessage(const FText& Message)
 {
 	if (ChatScrollBox)
 	{
-		UTextBlock* NewMessageBlock = NewObject<UTextBlock>(ChatScrollBox);
+		URichTextBlock* NewMessageBlock = NewObject<URichTextBlock>(ChatScrollBox);
 		if (NewMessageBlock)
 		{
 			NewMessageBlock->SetText(Message);
-			FSlateFontInfo FontInfo = NewMessageBlock->GetFont();
+			if (ChatTextStyle)
+			{
+				NewMessageBlock->SetTextStyleSet(ChatTextStyle);
+			}
+			/*FSlateFontInfo FontInfo = NewMessageBlock->GetFont();
 			FontInfo.Size = 32;
 			
 			NewMessageBlock->SetFont(FontInfo);
-			NewMessageBlock->SetColorAndOpacity(FSlateColor(FLinearColor(0, 0, 0)));
+			NewMessageBlock->SetColorAndOpacity(FSlateColor(FLinearColor(0, 0, 0)));*/
 
 			ChatScrollBox->AddChild(NewMessageBlock);
 			ChatScrollBox->ScrollToEnd();
 		}
+	}
+}
+
+void ULobbyWidget::ShowStartButton()
+{
+	if (StartButton)
+	{
+		StartButton->SetVisibility(ESlateVisibility::Visible);
 	}
 }

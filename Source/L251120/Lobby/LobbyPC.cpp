@@ -24,6 +24,11 @@ void ALobbyPC::BeginPlay()
 			LobbyWidgetObject = CreateWidget<ULobbyWidget>(this, LobbyWidgetClass);
 			LobbyWidgetObject->AddToViewport();
 
+			if (LobbyWidgetObject && HasAuthority())
+			{
+				LobbyWidgetObject->ShowStartButton();
+			}
+
 			//Listen Sever만 실행되게 만든 것.. UI 생성 문제 때문에
 			ALobbyGM* GM = Cast<ALobbyGM>(UGameplayStatics::GetGameMode(GetWorld()));
 			if (GM)
@@ -31,6 +36,8 @@ void ALobbyPC::BeginPlay()
 				GM->CheckConnectionCount();
 			}
 		}
+		bShowMouseCursor = true;
+		SetInputMode(FInputModeGameAndUI());
 	}
 }
 
