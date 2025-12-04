@@ -39,6 +39,7 @@ void ULobbyWidget::NativeOnInitialized()
 void ULobbyWidget::Start()
 {
 	GetWorld()->ServerTravel(TEXT("Lvl_InGame"));
+	GetWorld()->GetTimerManager().ClearTimer(LeftTimerHandle);
 }
 
 void ULobbyWidget::ProcessOnCommite(const FText& Text, ETextCommit::Type CommitMethod)
