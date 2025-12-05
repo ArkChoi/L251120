@@ -81,6 +81,9 @@ void ALMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		UIC->BindAction(IA_Fire, ETriggerEvent::Completed, this, &ALMyCharacter::StopFire);
 		UIC->BindAction(IA_IronSight, ETriggerEvent::Started, this, &ALMyCharacter::StartIronSight);
 		UIC->BindAction(IA_IronSight, ETriggerEvent::Completed, this, &ALMyCharacter::StopIronSight);
+
+		UIC->BindAction(IA_Crouch, ETriggerEvent::Started, this, &ALMyCharacter::StartCrouch);
+		//UIC->BindAction(IA_Crouch, ETriggerEvent::Completed, this, &ALMyCharacter::StopRun);
 	}
 }
 
@@ -128,7 +131,21 @@ void ALMyCharacter::C2S_StopRun_Implementation()
 	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 }
 
-void ALMyCharacter::CrouchTrigger()
+void ALMyCharacter::StartCrouch()
+{
+	bCrouching = CanCrouch();
+	if (bCrouching)
+	{
+		Crouch();
+		return;
+	}
+	UnCrouch();
+
+	C2S_StartCrouch_Implementation();
+}
+
+
+void ALMyCharacter::C2S_StartCrouch_Implementation()
 {
 	bCrouching = CanCrouch();
 	if (bCrouching)
@@ -139,8 +156,29 @@ void ALMyCharacter::CrouchTrigger()
 	UnCrouch();
 }
 
+//void ALMyCharacter::StopCrouch()
+//{
+//	UnCrouch();
+//
+//	C2S_StopCrouch_Implementation();
+//}
+//
+//void ALMyCharacter::C2S_StopCrouch_Implementation()
+//{
+//	UnCrouch();
+//}
 
-void ALMyCharacter::Reload() 
+void ALMyCharacter::Reload()
+{
+	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+	if (ChildWeapon)
+	{
+		PlayAnimMontage(ChildWeapon->ReloadMontage);
+	}
+	C2S_Reload_Implementation();
+}
+
+void ALMyCharacter::C2S_Reload_Implementation()
 {
 	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
 	if (ChildWeapon)
@@ -264,10 +302,24 @@ void ALMyCharacter::DoDead()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetSimulatePhysics(true);
+	C2S_DoDead_Implementation();
+}
+
+void ALMyCharacter::C2S_DoDead_Implementation()
+{
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetMesh()->SetSimulatePhysics(true);
 }
 
 void ALMyCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 {
+	APlayerController* PC = Cast<APlayerController>(GetController());
+
+	if (!PC || !PC->HasAuthority())
+	{
+		return;
+	}
 
 	AFloorWeaponBase* TempWeapon = Cast<AFloorWeaponBase>(OtherActor);
 	if (TempWeapon)
@@ -275,6 +327,7 @@ void ALMyCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 		Weapon->SetChildActorClass(TempWeapon->WeaponTemplate);
 
 		AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+
 		if (ChildWeapon && TempWeapon->WeaponState == EWeaponState::Pistol)
 		{
 			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
@@ -298,12 +351,56 @@ void ALMyCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
 		{
 			TempWeapon->Destroy();
 		}
+
+		TempWeapon->SetOwner(this);
+
 	}
+
 }
 
 void ALMyCharacter::ProcessBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
 {
+	/*APlayerController* PC = Cast<APlayerController>(GetController());
 
+	if (!PC || !PC->HasAuthority())
+	{
+		return;
+	}
+
+	AFloorWeaponBase* TempWeapon = Cast<AFloorWeaponBase>(OtherActor);
+	if (TempWeapon)
+	{
+		Weapon->SetChildActorClass(TempWeapon->WeaponTemplate);
+
+		AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
+
+		if (ChildWeapon && TempWeapon->WeaponState == EWeaponState::Pistol)
+		{
+			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+			WeaponState = EWeaponState::Pistol;
+			ChildWeapon->SetOwner(this);
+		}
+		else if (ChildWeapon && TempWeapon->WeaponState == EWeaponState::Rifle)
+		{
+			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+			WeaponState = EWeaponState::Rifle;
+			ChildWeapon->SetOwner(this);
+		}
+		else if (ChildWeapon && TempWeapon->WeaponState == EWeaponState::GrenadeLauncher)
+		{
+			ChildWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, ChildWeapon->SocketName);
+			WeaponState = EWeaponState::Rifle;
+			ChildWeapon->SetOwner(this);
+		}
+
+		if (!TempWeapon->bIsInfinity)
+		{
+			TempWeapon->Destroy();
+		}
+
+		TempWeapon->SetOwner(this);
+
+	}*/
 }
 
 void ALMyCharacter::UseItme(AActor* PickedUpItem)
@@ -340,6 +437,15 @@ void ALMyCharacter::C2S_StopIronSight_Implementation()
 	bIsIronSight = false;
 }
 
+FRotator ALMyCharacter::GetAimOffset() const
+{
+	const FVector AimDirWS = GetBaseAimRotation().Vector();
+	const FVector AimDirLS = ActorToWorld().InverseTransformVectorNoScale(AimDirWS);
+	const FRotator AimRotLS = AimDirLS.Rotation();
+
+	return AimRotLS;
+}
+
 void ALMyCharacter::SetGenericTeamId(const FGenericTeamId& InTeamID)
 {
 	TeamID = InTeamID;
@@ -363,6 +469,8 @@ void ALMyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(ALMyCharacter, bIsIronSight);
 
 	DOREPLIFETIME(ALMyCharacter, CurrentHP);
-	DOREPLIFETIME(ALMyCharacter, MaxHP);
+	DOREPLIFETIME(ALMyCharacter, MaxHP); 
+
+	DOREPLIFETIME(ALMyCharacter, WeaponState);
 }
 

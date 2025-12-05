@@ -67,6 +67,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UInputAction> IA_IronSight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<class UInputAction> IA_Crouch;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", Replicated)
 	float CurrentHP = 100;
@@ -95,7 +98,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)
 	uint8 bIsIronSight : 1 = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
 	EWeaponState  WeaponState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
@@ -126,10 +129,25 @@ public:
 	void C2S_StopRun_Implementation();
 
 	UFUNCTION(BlueprintCallable)
-	void CrouchTrigger();
+	void StartCrouch();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_StartCrouch();
+	void C2S_StartCrouch_Implementation();
+
+	/*UFUNCTION(BlueprintCallable)
+	void StopCrouch();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_StopCrouch();
+	void C2S_StopCrouch_Implementation();*/
 
 	UFUNCTION(BlueprintCallable)
 	void Reload();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_Reload();
+	void C2S_Reload_Implementation();
 
 	UFUNCTION(BlueprintCallable)
 	void HitReact();
@@ -153,6 +171,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DoDead();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_DoDead();
+	void C2S_DoDead_Implementation();
 
 	UFUNCTION(BlueprintCallable)
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
@@ -183,6 +205,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void C2S_StopIronSight();
 	void C2S_StopIronSight_Implementation();
+
+	FRotator GetAimOffset() const;
 
 	//----------------------------------------------------------------------//
 	// IGenericTeamAgentInterface

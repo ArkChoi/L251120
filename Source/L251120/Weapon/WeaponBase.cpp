@@ -13,6 +13,7 @@
 #include "ProjectileBase.h"
 #include "Kismet/KismetMathLibrary.h"
 
+
 // Sets default values
 AWeaponBase::AWeaponBase()
 {
@@ -22,7 +23,8 @@ AWeaponBase::AWeaponBase()
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
 
-
+	SetReplicates(true);
+	SetReplicateMovement(true);
 }
 
 // Called when the game starts or when spawned
