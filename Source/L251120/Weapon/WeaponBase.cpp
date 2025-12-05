@@ -74,32 +74,34 @@ void AWeaponBase::Fire()
 
 	FVector SpawnLocation;
 	FVector TargetLocation;
-	FVector BulletDirection;
+	//FVector BulletDirection;
 	FRotator AimRotation;
 	FHitResult HitResult;
 
-	bool bResult = CalculateShootDate(SpawnLocation, TargetLocation, BulletDirection, AimRotation);
+	SpawnLocation = Mesh->GetSocketLocation(TEXT("Muzzle"));
+	FVector WeaponForward = Mesh->GetSocketRotation(TEXT("Muzzle")).Vector().GetSafeNormal();
+	TargetLocation = SpawnLocation + (WeaponForward * 100.f);
+	AimRotation = UKismetMathLibrary::FindLookAtRotation(SpawnLocation, TargetLocation + (UKismetMathLibrary::RandomUnitVector() * 0.5f));
+
+	/*bool bResult = CalculateShootDate(SpawnLocation, TargetLocation, BulletDirection, AimRotation);
 
 	if (!bResult)
 	{
 		return;
-	}
+	}*/
 
-	FireProjectile(FTransform(AimRotation, SpawnLocation, FVector::OneVector),
-		HitResult);
+	FireProjectile(FTransform(AimRotation, SpawnLocation, FVector::OneVector),HitResult);
 
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash,
-		SpawnLocation,
-		AimRotation
-
-	);
+	//UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash,SpawnLocation,AimRotation);
+	S2A_SpawnMuzzleFlash(SpawnLocation, AimRotation);
 
 	//Recoil
 	Character->AddControllerPitchInput(-0.05f);
 
 	CurrentBulletCount--;
 	UE_LOG(LogTemp, Warning, TEXT("Fire %d"), CurrentBulletCount);
-	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FireSoundCue, GetActorLocation());
+	//UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FireSoundCue, GetActorLocation());
+	S2A_SpawnMuzzleSound();
 
 	TimeofLastShoot = GetWorld()->TimeSeconds;
 }
@@ -183,4 +185,15 @@ bool AWeaponBase::CalculateShootDate(FVector& OutSpawnLocation, FVector& OutTarg
 
 	OutAimRotation = UKismetMathLibrary::FindLookAtRotation(OutSpawnLocation, OutTargetLocation + (UKismetMathLibrary::RandomUnitVector() * 20.f));
 	return true;
+}
+
+// Client 에서만 실행
+void AWeaponBase::S2A_SpawnMuzzleFlash_Implementation(const FVector& SpawnLocation, const FRotator& AimRotation)
+{
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SpawnLocation, AimRotation);
+}
+
+void AWeaponBase::S2A_SpawnMuzzleSound_Implementation()
+{
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), FireSoundCue, GetActorLocation());
 }
