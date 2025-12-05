@@ -137,11 +137,11 @@ void ALMyCharacter::StartCrouch()
 	if (bCrouching)
 	{
 		Crouch();
+		C2S_StartCrouch();
 		return;
 	}
 	UnCrouch();
-
-	C2S_StartCrouch_Implementation();
+	C2S_StartCrouch();
 }
 
 
@@ -175,7 +175,7 @@ void ALMyCharacter::Reload()
 	{
 		PlayAnimMontage(ChildWeapon->ReloadMontage);
 	}
-	C2S_Reload_Implementation();
+	C2S_Reload();
 }
 
 void ALMyCharacter::C2S_Reload_Implementation()
@@ -214,6 +214,12 @@ void ALMyCharacter::ReloadWeapon()
 void ALMyCharacter::StartFire()
 {
 	bIsFire = true;
+	C2S_StartFire();
+}
+
+void ALMyCharacter::C2S_StartFire_Implementation()
+{
+	bIsFire = true;
 	DoFire();
 }
 
@@ -227,6 +233,12 @@ void ALMyCharacter::DoFire()
 }
 
 void ALMyCharacter::StopFire()
+{
+	bIsFire = false;
+	C2S_StopFire();
+}
+
+void ALMyCharacter::C2S_StopFire_Implementation()
 {
 	bIsFire = false;
 	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());

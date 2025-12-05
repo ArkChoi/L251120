@@ -73,4 +73,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FireProjectile(FTransform SpawnTransform, FHitResult InHitResult);
+
+	bool CalculateShootDate(FVector& OutSpawnLocation, FVector& OutTargetLocation, FVector& OutBulletDirection, FRotator& OutAimRotation);
 };

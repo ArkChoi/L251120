@@ -158,10 +158,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartFire();
 
+	UFUNCTION(Server, Reliable)
+	void C2S_StartFire();
+	void C2S_StartFire_Implementation();
+
 	void DoFire();
 
 	UFUNCTION(BlueprintCallable)
 	void StopFire();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_StopFire();
+	void C2S_StopFire_Implementation();
 
 	UFUNCTION(BlueprintCallable)
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;

@@ -29,7 +29,11 @@ AProjectileBase::AProjectileBase()
 	Movement->MaxSpeed = 8000.0f;
 	Movement->InitialSpeed = 8000.0f;
 
-	
+	SetReplicates(true);
+	SetReplicateMovement(true);
+	bNetLoadOnClient = true;
+	bNetUseOwnerRelevancy = true;
+
 }
 
 // Called when the game starts or when spawned

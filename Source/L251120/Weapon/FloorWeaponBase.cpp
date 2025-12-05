@@ -20,6 +20,8 @@ AFloorWeaponBase::AFloorWeaponBase()
 
 	SetReplicates(true);
 	SetReplicateMovement(true);
+	bNetLoadOnClient = true;
+	bNetUseOwnerRelevancy = true;
 }
 
 // Called when the game starts or when spawned
