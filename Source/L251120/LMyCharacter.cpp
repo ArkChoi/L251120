@@ -19,6 +19,7 @@
 #include "weapon/FloorWeaponBase.h"
 #include "Components/DecalComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ALMyCharacter::ALMyCharacter()
@@ -72,6 +73,9 @@ void ALMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	UEnhancedInputComponent* UIC = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (UIC)
 	{
+		UIC->BindAction(IA_Run, ETriggerEvent::Started, this, &ALMyCharacter::StartRun);
+		UIC->BindAction(IA_Run, ETriggerEvent::Completed, this, &ALMyCharacter::StopRun);
+
 		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this, &ALMyCharacter::Reload);
 		UIC->BindAction(IA_Fire, ETriggerEvent::Started, this, &ALMyCharacter::StartFire);
 		UIC->BindAction(IA_Fire, ETriggerEvent::Completed, this, &ALMyCharacter::StopFire);
@@ -100,14 +104,27 @@ void ALMyCharacter::Look(float Pitch, float Yaw)
 	AddControllerYawInput(Yaw);
 }
 
-void ALMyCharacter::RunTrigger()
+void ALMyCharacter::StartRun()
 {
-	bIsRun = (!bIsRun);
-	if (bIsRun)
-	{
-		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
-		return;
-	}
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f; //서버시간 때문에 느려보이지 않을려고 -> 반응성이 좋아지게 하기 위해서
+	C2S_StartRun();
+}
+
+void ALMyCharacter::C2S_StartRun_Implementation()
+{
+	bIsRun = true;
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+}
+
+void ALMyCharacter::StopRun()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
+	C2S_StopRun();
+}
+
+void ALMyCharacter::C2S_StopRun_Implementation()
+{
+	bIsRun = false;
 	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 }
 
@@ -319,5 +336,12 @@ void ALMyCharacter::SetGenericTeamId(const FGenericTeamId& InTeamID)
 FGenericTeamId ALMyCharacter::GetGenericTeamId() const
 {
 	return TeamID;
+}
+
+void ALMyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ALMyCharacter, bIsRun);
 }
 

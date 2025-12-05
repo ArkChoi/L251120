@@ -43,7 +43,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr <class UCameraComponent> Camera;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
 	uint8 bIsRun : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
@@ -72,6 +72,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VALUE")
 	TSubclassOf<class AWeaponBase> WeaponTemplate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<class UInputAction> IA_Run;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UInputAction> IA_Reload;
@@ -108,7 +111,18 @@ public:
 	void Look(float Pitch, float Yaw);
 
 	UFUNCTION(BlueprintCallable)
-	void RunTrigger();
+	void StartRun();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_StartRun();
+	void C2S_StartRun_Implementation();
+
+	UFUNCTION(BlueprintCallable)
+	void StopRun();
+
+	UFUNCTION(Server, Reliable)
+	void C2S_StopRun();
+	void C2S_StopRun_Implementation();
 
 	UFUNCTION(BlueprintCallable)
 	void CrouchTrigger();
@@ -176,4 +190,7 @@ public:
 private:
 	FGenericTeamId TeamID;
 
+
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
