@@ -19,7 +19,7 @@ void ALPlayerController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
 
-	if (IsLocalController())
+	/*if (IsLocalController())
 	{
 		if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
 		{
@@ -28,7 +28,7 @@ void ALPlayerController::OnPossess(APawn* aPawn)
 				InputSystem->AddMappingContext(InputMapping, 0);
 			}
 		}
-	}
+	}*/
 }
 
 void ALPlayerController::OnUnPossess()
@@ -44,4 +44,20 @@ void ALPlayerController::OnUnPossess()
 		}
 	}
 	Super::OnUnPossess();
+}
+
+void ALPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (IsLocalController())
+	{
+		if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player))
+		{
+			if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+			{
+				InputSystem->AddMappingContext(InputMapping, 0);
+			}
+		}
+	}
 }

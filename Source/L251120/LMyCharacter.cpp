@@ -321,9 +321,21 @@ void ALMyCharacter::EquipItme(AActor* PickedUpItem)
 void ALMyCharacter::StartIronSight()
 {
 	bIsIronSight = true;
+	C2S_StartIronSight_Implementation();
+}
+
+void ALMyCharacter::C2S_StartIronSight_Implementation()
+{
+	bIsIronSight = true;
 }
 
 void ALMyCharacter::StopIronSight()
+{
+	bIsIronSight = false;
+	C2S_StopIronSight_Implementation();
+}
+
+void ALMyCharacter::C2S_StopIronSight_Implementation()
 {
 	bIsIronSight = false;
 }
@@ -343,5 +355,14 @@ void ALMyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ALMyCharacter, bIsRun);
+	DOREPLIFETIME(ALMyCharacter, bLeftLean);
+	DOREPLIFETIME(ALMyCharacter, bRightLean);
+	DOREPLIFETIME(ALMyCharacter, bAiming);
+	DOREPLIFETIME(ALMyCharacter, bCrouching);
+	DOREPLIFETIME(ALMyCharacter, bIsFire);
+	DOREPLIFETIME(ALMyCharacter, bIsIronSight);
+
+	DOREPLIFETIME(ALMyCharacter, CurrentHP);
+	DOREPLIFETIME(ALMyCharacter, MaxHP);
 }
 

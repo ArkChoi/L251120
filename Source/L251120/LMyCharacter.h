@@ -43,23 +43,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr <class UCameraComponent> Camera;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
-	uint8 bIsRun : 1 = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
-	uint8 bLeftLean : 1 = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
-	uint8 bRightLean : 1 = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
-	uint8 bAiming : 1 = false;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
-	EWeaponState  WeaponState;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
-	uint8 bCrouching : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UAnimMontage> HitMontage;
@@ -85,17 +68,35 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UInputAction> IA_IronSight;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", Replicated)
 	float CurrentHP = 100;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", Replicated)
 	float MaxHP = 100;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated) //이거만 함
+	uint8 bIsRun : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
+	uint8 bLeftLean : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
+	uint8 bRightLean : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
+	uint8 bAiming : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
+	uint8 bCrouching : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)
 	uint8 bIsFire : 1 = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)
 	uint8 bIsIronSight : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim")
+	EWeaponState  WeaponState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	TObjectPtr<class UParticleSystem> BloodEffect;
@@ -171,8 +172,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartIronSight();
 
+	UFUNCTION(Server, Reliable)
+	void C2S_StartIronSight();
+	void C2S_StartIronSight_Implementation();
+
 	UFUNCTION(BlueprintCallable)
 	void StopIronSight();
+
+
+	UFUNCTION(Server, Reliable)
+	void C2S_StopIronSight();
+	void C2S_StopIronSight_Implementation();
 
 	//----------------------------------------------------------------------//
 	// IGenericTeamAgentInterface
