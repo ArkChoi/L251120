@@ -199,7 +199,20 @@ void ALMyCharacter::HitReact()
 
 	PlayAnimMontage(HitMontage,1.0f ,RandName[RandInteger]);
 	//PlayAnimMontage(HitMontage, 1.0f, FName(*SectionName)); //위 코드와 같은 동작이나.. 이름이 1,2,3,4,... 로 되어 있어야 한다
-	
+
+	S2A_HitReact();
+}
+
+void ALMyCharacter::S2A_HitReact_Implementation()
+{
+	int32 RandInteger = FMath::RandRange(0, 7);
+	FName RandName[8] = {
+	"Back_01", "Front_01", "Front_02",
+	"Front_03", "Front_04", "Front_05",
+	"Front_06", "Front_07"
+	};
+
+	PlayAnimMontage(HitMontage, 1.0f, RandName[RandInteger]);
 }
 
 void ALMyCharacter::ReloadWeapon()
@@ -260,7 +273,7 @@ float ALMyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 			CurrentHP -= DamageAmount;
 			UE_LOG(LogTemp, Warning, TEXT("Point Damage %f %s"), CurrentHP, *(Event->HitInfo.BoneName.ToString()));
 		}
-		SpawnHitEffect(Event->HitInfo);
+		S2A_SpawnHitEffect(Event->HitInfo);
 	}
 	else if (DamageEvent.IsOfType(FRadialDamageEvent::ClassID))
 	{
@@ -277,12 +290,13 @@ float ALMyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("%f"), CurrentHP);
-	HitReact();
+	S2A_HitReact();
 
 	if (CurrentHP <= 0)
 	{
-		FString SectionName = FString::Printf(TEXT("%d"), FMath::RandRange(1, 8));
-		PlayAnimMontage(DeathMontage, 1.0f, FName(*SectionName));
+		S2A_DeadAnime();
+
+		DoDead();
 	}
 
 	/*UGameplayStatics::SpawnEmitterAtLocation(
@@ -309,12 +323,25 @@ void ALMyCharacter::SpawnHitEffect(const FHitResult& Hit)
 	}
 }
 
+void ALMyCharacter::S2A_SpawnHitEffect_Implementation(const FHitResult& Hit)
+{
+	if (BloodEffect)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			BloodEffect,
+			Hit.ImpactPoint,
+			Hit.ImpactNormal.Rotation()
+		);
+	}
+}
+
 void ALMyCharacter::DoDead()
 {
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetSimulatePhysics(true);
-	C2S_DoDead_Implementation();
+	C2S_DoDead();
 }
 
 void ALMyCharacter::C2S_DoDead_Implementation()
@@ -322,6 +349,12 @@ void ALMyCharacter::C2S_DoDead_Implementation()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetSimulatePhysics(true);
+}
+
+void ALMyCharacter::S2A_DeadAnime_Implementation()
+{
+	FString SectionName = FString::Printf(TEXT("%d"), FMath::RandRange(1, 8));
+	PlayAnimMontage(DeathMontage, 1.0f, FName(*SectionName));
 }
 
 void ALMyCharacter::NotifyActorBeginOverlap(AActor* OtherActor)

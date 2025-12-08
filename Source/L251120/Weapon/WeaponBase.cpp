@@ -164,6 +164,7 @@ bool AWeaponBase::CalculateShootDate(FVector& OutSpawnLocation, FVector& OutTarg
 	
 	TArray<AActor*> IngnoreActors;
 	IngnoreActors.Add(GetOwner());
+	IngnoreActors.Add(this);
 
 		FHitResult HitResult;
 

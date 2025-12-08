@@ -29,7 +29,7 @@ AProjectileBase::AProjectileBase()
 	Movement->MaxSpeed = 8000.0f;
 	Movement->InitialSpeed = 8000.0f;
 
-	SetReplicates(true);
+	bReplicates = true;
 	SetReplicateMovement(true);
 	bNetLoadOnClient = true;
 	bNetUseOwnerRelevancy = true;
@@ -104,17 +104,83 @@ void AProjectileBase::ProcessComponentHit(UPrimitiveComponent* HitComponent, AAc
 {
 	SpawnHitEffect(Hit);
 
+	//if (GetLocalRole() == ENetRole::ROLE_Authority)
+	//{
+	//	NET_LOG(TEXT("Bullet ROLE_Authority"));
+	//}
+	//else if (GetLocalRole() == ENetRole::ROLE_AutonomousProxy)
+	//{
+	//	NET_LOG(TEXT("Bullet ROLE_AutonomousProxy"));
+	//}
+	//else if (GetLocalRole() == ENetRole::ROLE_SimulatedProxy)
+	//{
+	//	NET_LOG(TEXT("Bullet ROLE_SimulatedProxy"));
+	//}
+
+	//if (GetRemoteRole() == ENetRole::ROLE_Authority)
+	//{
+	//	NET_LOG(TEXT("Bullet Remote ROLE_Authority"));
+	//}
+	//else if (GetRemoteRole() == ENetRole::ROLE_AutonomousProxy)
+	//{
+	//	NET_LOG(TEXT("Bullet Remote ROLE_AutonomousProxy"));
+	//}
+	//else if (GetRemoteRole() == ENetRole::ROLE_SimulatedProxy)
+	//{
+	//	NET_LOG(TEXT("Bullet Remote ROLE_SimulatedProxy"));
+	//}
+
+	//
+
+	//if (GetOwner())
+	//{
+	//	NET_LOG(FString::Printf(TEXT("Bullet Owner %s"), *GetOwner()->GetName()));
+	//}
+	//else
+	//{
+	//	NET_LOG(TEXT("Bullet No Owner"));
+	//}
+
+	//if (GetOwner()->GetOwner())
+	//{
+	//	NET_LOG(FString::Printf(TEXT("Gun Owner %s"), *GetOwner()->GetOwner()->GetName()));
+	//}
+	//else
+	//{
+	//	NET_LOG(TEXT("Gun No Owner"));
+	//}
+
+	//if (GetOwner()->GetOwner()->GetOwner())
+	//{
+	//	NET_LOG(FString::Printf(TEXT("Pawn Owner %s"), *GetOwner()->GetOwner()->GetOwner()->GetName()));
+	//}
+	//else
+	//{
+	//	NET_LOG(TEXT("Pawn No Owner"));
+	//}
+
+	if (!HasAuthority())
+	{
+		//서버가 아니면 총알의 주인이 없다.
+		return;
+	}
+
 	APawn* Pawn = Cast<APawn>(GetOwner()->GetOwner());
 
-	//총쏘는 데미지
-	UGameplayStatics::ApplyPointDamage(HitResult.GetActor(),
-		Damage,
-		-HitResult.ImpactNormal,
-		HitResult,
-		Pawn->GetController(),
-		this,
-		UBaseDamageType::StaticClass()
-	);
+	if (Pawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s %s"), *OtherActor->GetName(), *OtherComp->GetName());
+
+		//총쏘는 데미지
+		UGameplayStatics::ApplyPointDamage(Hit.GetActor(),
+			Damage,
+			-Hit.ImpactNormal,
+			Hit,
+			Pawn->GetController(),
+			this,
+			UBaseDamageType::StaticClass()
+		);
+	}
 }
 
 void AProjectileBase::SpawnHitEffect(const FHitResult& Hit)

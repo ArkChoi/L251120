@@ -152,6 +152,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HitReact();
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void S2A_HitReact();
+	void S2A_HitReact_Implementation();
+
 	UFUNCTION(BlueprintCallable)
 	void ReloadWeapon();
 
@@ -177,12 +181,20 @@ public:
 	UFUNCTION()
 	virtual void SpawnHitEffect(const FHitResult& Hit);
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void S2A_SpawnHitEffect(const FHitResult& Hit);
+	void S2A_SpawnHitEffect_Implementation(const FHitResult& Hit);
+
 	UFUNCTION(BlueprintCallable)
 	void DoDead();
 
 	UFUNCTION(Server, Reliable)
 	void C2S_DoDead();
 	void C2S_DoDead_Implementation();
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void S2A_DeadAnime();
+	void S2A_DeadAnime_Implementation();
 
 	UFUNCTION(BlueprintCallable)
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
