@@ -149,6 +149,10 @@ public:
 	void C2S_Reload();
 	void C2S_Reload_Implementation();
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void S2A_Reload();
+	void S2A_Reload_Implementation();
+
 	UFUNCTION(BlueprintCallable)
 	void HitReact();
 

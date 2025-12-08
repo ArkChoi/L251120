@@ -76,7 +76,7 @@ void ALMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		UIC->BindAction(IA_Run, ETriggerEvent::Started, this, &ALMyCharacter::StartRun);
 		UIC->BindAction(IA_Run, ETriggerEvent::Completed, this, &ALMyCharacter::StopRun);
 
-		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this, &ALMyCharacter::Reload);
+		UIC->BindAction(IA_Reload, ETriggerEvent::Completed, this, &ALMyCharacter::C2S_Reload);
 		UIC->BindAction(IA_Fire, ETriggerEvent::Started, this, &ALMyCharacter::StartFire);
 		UIC->BindAction(IA_Fire, ETriggerEvent::Completed, this, &ALMyCharacter::StopFire);
 		UIC->BindAction(IA_IronSight, ETriggerEvent::Started, this, &ALMyCharacter::StartIronSight);
@@ -168,22 +168,29 @@ void ALMyCharacter::C2S_StartCrouch_Implementation()
 //	UnCrouch();
 //}
 
+//맘에 안듬..
+//bIsReload 만들어서 ABP에 박아 넣는 방식이 더 깔끔할 거 같은데
+//일단 보류..
 void ALMyCharacter::Reload()
+{
+	C2S_Reload();
+}
+
+void ALMyCharacter::C2S_Reload_Implementation()
+{
+	S2A_Reload();
+}
+
+void ALMyCharacter::S2A_Reload_Implementation()
 {
 	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
 	if (ChildWeapon)
 	{
 		PlayAnimMontage(ChildWeapon->ReloadMontage);
 	}
-	C2S_Reload();
-}
-
-void ALMyCharacter::C2S_Reload_Implementation()
-{
-	AWeaponBase* ChildWeapon = Cast<AWeaponBase>(Weapon->GetChildActor());
-	if (ChildWeapon)
+	else
 	{
-		PlayAnimMontage(ChildWeapon->ReloadMontage);
+		UE_LOG(LogTemp, Warning, TEXT("No ChildWeapon"));
 	}
 }
 
