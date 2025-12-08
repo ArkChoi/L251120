@@ -9,6 +9,8 @@
 /**
  * 
  */
+class ULoginWidget;
+
 UCLASS()
 class L251120_API ALPlayerController : public APlayerController
 {
@@ -26,5 +28,12 @@ public:
 	void OnUnPossess() override;
 
 	virtual void BeginPlay() override;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TSubclassOf<ULoginWidget> LoginWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TObjectPtr<ULoginWidget> LoginWidgetObject;
 
 };

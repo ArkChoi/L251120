@@ -5,6 +5,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "InputMappingContext.h"
+#include "Login/LoginWidget.h"
+//#include "Login/LoginGM.h"
+//#include "Kismet/GameplayStatics.h"
 
 ALPlayerController::ALPlayerController()
 {
@@ -59,5 +62,18 @@ void ALPlayerController::BeginPlay()
 				InputSystem->AddMappingContext(InputMapping, 0);
 			}
 		}
+	}
+
+	if (LoginWidgetClass)
+	{
+		if (IsLocalPlayerController())
+		{
+			LoginWidgetObject = CreateWidget<ULoginWidget>(this, LoginWidgetClass);
+			LoginWidgetObject->AddToViewport();
+			LoginWidgetObject->SetOwningPlayer(this);
+			LoginWidgetObject->UpDateHPBar(1.f);
+		}
+		bShowMouseCursor = false;
+		SetInputMode(FInputModeGameOnly());
 	}
 }

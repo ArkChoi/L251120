@@ -20,6 +20,8 @@
 #include "Components/DecalComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Login/LoginGS.h"
+#include "Login/LoginGM.h"
 
 // Sets default values
 ALMyCharacter::ALMyCharacter()
@@ -85,6 +87,11 @@ void ALMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 		UIC->BindAction(IA_Crouch, ETriggerEvent::Started, this, &ALMyCharacter::StartCrouch);
 		//UIC->BindAction(IA_Crouch, ETriggerEvent::Completed, this, &ALMyCharacter::StopRun);
 	}
+}
+
+void ALMyCharacter::OnRep_ChangeHP(const float InHP)
+{
+	OnChangeHP.Broadcast(CurrentHP / MaxHP);
 }
 
 void ALMyCharacter::Move(float Forward, float Right)
@@ -299,8 +306,14 @@ float ALMyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 	UE_LOG(LogTemp, Warning, TEXT("%f"), CurrentHP);
 	S2A_HitReact();
 
-	if (CurrentHP <= 0)
+	if (CurrentHP <= 0 ) //&& bIsDead == false
 	{
+		ALoginGM* GM = Cast<ALoginGM>(UGameplayStatics::GetGameMode(GetWorld()));
+		if (GM)
+		{
+			GM->CheckAliveCount();
+		}
+
 		S2A_DeadAnime();
 
 		DoDead();
@@ -313,6 +326,11 @@ float ALMyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 		);
 	this->AddControllerPitchInput(-0.05f);*/
+
+	if (HasAuthority())
+	{
+		OnRep_ChangeHP(CurrentHP / MaxHP);
+	}
 
 	return 0.0f;
 }
@@ -348,6 +366,7 @@ void ALMyCharacter::DoDead()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetSimulatePhysics(true);
+
 	C2S_DoDead();
 }
 
@@ -356,6 +375,8 @@ void ALMyCharacter::C2S_DoDead_Implementation()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetMesh()->SetSimulatePhysics(true);
+
+	bIsDead = true;
 }
 
 void ALMyCharacter::S2A_DeadAnime_Implementation()
@@ -519,10 +540,12 @@ void ALMyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(ALMyCharacter, bCrouching);
 	DOREPLIFETIME(ALMyCharacter, bIsFire);
 	DOREPLIFETIME(ALMyCharacter, bIsIronSight);
+	DOREPLIFETIME(ALMyCharacter, bIsDead);
 
 	DOREPLIFETIME(ALMyCharacter, CurrentHP);
 	DOREPLIFETIME(ALMyCharacter, MaxHP); 
 
 	DOREPLIFETIME(ALMyCharacter, WeaponState);
+
 }
 

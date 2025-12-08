@@ -4,9 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/GameStateBase.h"
 #include "Weapon/WeaponName.h"
 #include "GenericTeamAgentInterface.h"
 #include "LMyCharacter.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeHP, const float, InHP);
 
 //UENUM(BlueprintType)
 //enum class EWeaponState : uint8
@@ -36,7 +39,12 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
+	void OnRep_ChangeHP(const float InHP);
+
 public:
+	FOnChangeHP OnChangeHP;
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
 	TObjectPtr <class USpringArmComponent> SpringArm;
 
@@ -71,7 +79,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UInputAction> IA_Crouch;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", ReplicatedUsing = "OnRep_ChangeHP")
 	float CurrentHP = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", Replicated)
@@ -97,6 +105,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)
 	uint8 bIsIronSight : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data", Replicated)
+	uint8 bIsDead : 1 = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Anim", Replicated)
 	EWeaponState  WeaponState;
