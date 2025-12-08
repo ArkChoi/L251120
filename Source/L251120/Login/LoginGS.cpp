@@ -3,6 +3,8 @@
 
 #include "LoginGS.h"
 #include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
+#include "LoginGM.h"
 
 void ALoginGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -14,4 +16,27 @@ void ALoginGS::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 void ALoginGS::OnRep_AliveCount(const int32 InAliveCount)
 {
 	OnChangeAliveCount.ExecuteIfBound(AliveCount);
+
+}
+
+void ALoginGS::CountDownEndGame()
+{
+	if (EndTime > 0)
+	{
+		EndTime--;
+		OnRep_EndTime();
+	}
+	else
+	{
+		ALoginGM* GM = Cast<ALoginGM>(UGameplayStatics::GetGameMode(GetWorld()));
+		if (GM)
+		{
+			GM->EndGame();
+		}
+	}
+}
+
+void ALoginGS::OnRep_EndTime()
+{
+	OnChangeEndTime.Broadcast(EndTime);
 }

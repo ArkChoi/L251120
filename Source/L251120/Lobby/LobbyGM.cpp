@@ -76,5 +76,5 @@ void ALobbyGM::StartGame()
 			PC->S2C_ShowLoadingScreen();
 		}
 	}
-	GetWorld()->ServerTravel(TEXT("Lvl_InGame"));
+	GetWorld()->ServerTravel(TEXT("Lvl_Basic"));
 }

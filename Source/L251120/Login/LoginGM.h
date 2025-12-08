@@ -23,6 +23,8 @@ public:
 
 	void CheckAliveCount();
 
+	void EndGame();
+
 public:
 	FTimerHandle GameEndTimerHandle;
 };

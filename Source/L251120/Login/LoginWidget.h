@@ -40,4 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpDateHPBar(float InHP);
 
+	UFUNCTION(BlueprintCallable)
+	void UpdateEndTime(int32 InEndTime);
+
 };

@@ -40,7 +40,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION()
-	void OnRep_ChangeHP(const float InHP);
+	void OnRep_CurrentHP(const float InHP);
 
 public:
 	FOnChangeHP OnChangeHP;
@@ -79,7 +79,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UInputAction> IA_Crouch;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", ReplicatedUsing = "OnRep_ChangeHP")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", ReplicatedUsing = "OnRep_CurrentHP")
 	float CurrentHP = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character", Replicated)

@@ -89,7 +89,7 @@ void ALMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	}
 }
 
-void ALMyCharacter::OnRep_ChangeHP(const float InHP)
+void ALMyCharacter::OnRep_CurrentHP(const float InHP)
 {
 	OnChangeHP.Broadcast(CurrentHP / MaxHP);
 }
@@ -329,7 +329,7 @@ float ALMyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 	if (HasAuthority())
 	{
-		OnRep_ChangeHP(CurrentHP / MaxHP);
+		OnRep_CurrentHP(CurrentHP / MaxHP);
 	}
 
 	return 0.0f;
